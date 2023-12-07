@@ -50,9 +50,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, department) => {
-
-        const resp = await fetchWithoutToken('login/new', { name, email, password, department }, 'POST');
+    const register = async (data) => {
+        const { tenant_id, client_id, client_secret, grant_type, resource } = data; 
+        const resp = await fetchWithoutToken('login/new', { tenant_id, client_id, client_secret, grant_type, resource }, 'POST');
 
         if (resp.ok) {
             localStorage.setItem('token', resp.token);

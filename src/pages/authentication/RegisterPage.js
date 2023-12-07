@@ -1,21 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Card, Input, Label, useId, Image, Button } from "@fluentui/react-components";
 import { useNavigate } from 'react-router-dom'
 import { useForm } from '../../hooks/useForm';
 import { useStyles } from '../useStyles';
+import { colGroupProperties } from '@fluentui/react';
+import { AuthContext } from '../../auth/AuthContext';
 
 export const RegisterPage = () => {
-    // const { register } = useContext(AuthContext);
+    const { register } = useContext(AuthContext);
+    const grant_type = process.env.REACT_APP_GRANT_TYPE;
+    const resource = process.env.REACT_APP_RESOURCE;
     const navigate = useNavigate();
-    const username = useId("input-username");
-    const emailId = useId("large-id");
-    const passwordId = useId("input-password");
     const styles = useStyles()
 
     const initialState = {
-        username: '',
-        email: '',
-        password: ''
+        tenant_id: '',
+        client_id: '',
+        client_secret: ''
     };
 
     const [form, handleInputChange, reset] = useForm(initialState);
@@ -23,9 +24,17 @@ export const RegisterPage = () => {
 
     const onSubmit = async (ev) => {
         ev.preventDefault();
+        const { tenant_id, client_id, client_secret } = form;
 
-        const { username } = form;
-        navigate("/auth/login")
+        const data = {
+            grant_type,
+            resource,
+            tenant_id,
+            client_id,
+            client_secret
+        }
+        console.log(data)
+        // navigate("/auth/login")
         // const msg = await register(username, email, password);
 
         // if (msg !== true) {
@@ -35,9 +44,9 @@ export const RegisterPage = () => {
     }
 
     const todoOk = () => {
-        return (form.username.length > 0 &&
-            form.email.length > 0 &&
-            form.password.length > 0
+        return (form.tenant_id.length > 0 &&
+            form.client_id.length > 0 &&
+            form.client_secret.length > 0
         ) ? true : false;
     }
 
@@ -50,21 +59,21 @@ export const RegisterPage = () => {
                     fit="none"
                 />
             </div>
-            <h3>Iniciar Sesion</h3>
+            <h3>Configuracion Inicial</h3>
             <form noValidate autoComplete="off" onSubmit={onSubmit}>
                 <div className={styles.field}>
-                    <Label htmlFor={username}>Usario</Label>
-                    <Input appearance="underline" name="username" value={form.username} onChange={handleInputChange} />
+                    <Label required>Tenant ID</Label>
+                    <Input appearance="underline" name="tenant_id" value={form.tenant_id} onChange={handleInputChange} />
                 </div>
 
                 <div className={styles.field}>
-                    <Label htmlFor={emailId}>Email</Label>
-                    <Input appearance="underline" name="email" value={form.email} onChange={handleInputChange} />
+                    <Label required>Client ID</Label>
+                    <Input appearance="underline" name="client_id" value={form.client_id} onChange={handleInputChange} />
                 </div>
 
                 <div className={styles.field}>
-                    <Label htmlFor={passwordId}>Password</Label>
-                    <Input appearance="underline" name="password" value={form.password} onChange={handleInputChange} />
+                    <Label required>Client Secret</Label>
+                    <Input appearance="underline" name="client_secret" value={form.client_secret} onChange={handleInputChange} />
                 </div>
                 <div className={styles.wrapper}>
                     <Button appearance="secondary" shape='square' onClick={reset}>
