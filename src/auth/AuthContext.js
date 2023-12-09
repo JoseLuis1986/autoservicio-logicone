@@ -9,10 +9,8 @@ export const AuthContext = createContext();
 const initialState = {
     uid: null,
     checking: true,
-    logged: false,
-    name: null,
-    email: null,
-    department: null
+    hasToken: false,
+    logged: false
 };
 
 export const AuthProvider = ({ children }) => {
@@ -20,23 +18,51 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(initialState);
     const { dispatch } = useContext(AlertContext);
 
-    const login = async (email, password) => {
 
-        const resp = await fetchWithoutToken('login', { email, password }, 'POST');
+    const register = async (data) => {
+        // const { tenant_id, client_id, client_secret, grant_type, resource } = data; 
+        const resp = await fetchWithoutToken('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
 
         if (resp.ok) {
+            //guardo el token
             localStorage.setItem('token', resp.token);
-            const { usuario } = resp;
+            // const { usuario } = resp;
+
+            console.log(resp.token);
 
             setAuth({
-                uid: usuario.uid,
+                ...initialState,
                 checking: false,
-                logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
             })
-            dispatch({ type: types.cleanMessage })
+            console.log("Autenticado!!");
+
+            return { ok: true };
+        }
+
+        return resp.msg;
+    };
+
+    const login = async (values) => {
+        const resp = await fetchWithToken('login', values, 'POST');
+
+        console.log(resp);
+        if (resp.ok) {
+            const { usuario } = resp;
+            const dataUser = JSON.parse(usuario);
+            const { Received, CodigoError, DescripcionError } = dataUser;
+            const datosUser = JSON.parse(Received);
+            const dtt = {
+                datosUser,
+                CodigoError,
+                DescripcionError,
+            }
+            localStorage.setItem('user', JSON.stringify(dtt.datosUser));
+
+            setAuth({
+                ...initialState,
+                checking: false,
+                logged: true
+            })
         } if (!resp.ok) {
             dispatch({
                 type: types.newIntent,
@@ -50,33 +76,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (data) => {
-        const { tenant_id, client_id, client_secret, grant_type, resource } = data; 
-        const resp = await fetchWithoutToken('login/new', { tenant_id, client_id, client_secret, grant_type, resource }, 'POST');
-
-        if (resp.ok) {
-            localStorage.setItem('token', resp.token);
-
-            const { usuario } = resp;
-
-            console.log(usuario);
-
-            setAuth({
-                uid: usuario.uid,
-                checking: false,
-                logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
-            })
-            // console.log("Autenticado!!");
-
-            return true;
-        }
-
-        return resp.msg;
-    };
-
+    // const getDataPromise = (tk) => new Promise((resolve, reject) => {
+    //     setTimeout(() => {
+    //         resolve({
+    //             ok: true,
+    //             token: tk,
+    //             usuario: JSON.parse(localStorage.getItem('user'))
+    //         });
+    //     }, 2000);
+    // });
 
     const verifyToken = useCallback(async () => {
 
@@ -87,9 +95,6 @@ export const AuthProvider = ({ children }) => {
                 uid: null,
                 checking: false,
                 logged: false,
-                name: null,
-                email: null,
-                department: null
             })
 
             return false;
@@ -105,10 +110,7 @@ export const AuthProvider = ({ children }) => {
             setAuth({
                 uid: usuario.uid,
                 checking: false,
-                logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
+                logged: true
             })
             console.log("Autenticado!!");
             return true;
@@ -116,10 +118,7 @@ export const AuthProvider = ({ children }) => {
             setAuth({
                 uid: null,
                 checking: false,
-                logged: false,
-                name: null,
-                email: null,
-                department: null
+                logged: false
             })
 
             return false;
@@ -130,11 +129,13 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
-
+        localStorage.removeItem('user');
         // dispatch({ type: types.closeSession });
 
         setAuth({
+            uid: null,
             checking: false,
+            hasToken: false,
             logged: false
         });
 

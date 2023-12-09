@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Card, Input, Label, useId, Image, Button } from "@fluentui/react-components";
 import { useNavigate } from 'react-router-dom'
 import { useForm } from '../../hooks/useForm';
@@ -6,17 +6,27 @@ import { useStyles } from '../useStyles';
 import { colGroupProperties } from '@fluentui/react';
 import { AuthContext } from '../../auth/AuthContext';
 
+// const token = localStorage.getItem('token')
+
 export const RegisterPage = () => {
-    const { register } = useContext(AuthContext);
+    // const [isToken, setIsToken] = useState(token)
+    const { register, auth } = useContext(AuthContext);
     const grant_type = process.env.REACT_APP_GRANT_TYPE;
     const resource = process.env.REACT_APP_RESOURCE;
     const navigate = useNavigate();
     const styles = useStyles()
 
+    // console.log("register page", token);
+    // useEffect(() => {
+    //     if (isToken != null) {
+    //         navigate("/auth/login")
+    //     }
+    // }, [isToken])
+
     const initialState = {
-        tenant_id: '',
-        client_id: '',
-        client_secret: ''
+        tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
+        client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
+        client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2'
     };
 
     const [form, handleInputChange, reset] = useForm(initialState);
@@ -34,7 +44,12 @@ export const RegisterPage = () => {
             client_secret
         }
         console.log(data)
-        // navigate("/auth/login")
+        const result = await register(data);
+        console.log('mi respuesta del registro', result);
+
+        if (result.ok) {
+            navigate("/auth/login")
+        }
         // const msg = await register(username, email, password);
 
         // if (msg !== true) {

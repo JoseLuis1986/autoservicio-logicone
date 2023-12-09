@@ -5,6 +5,10 @@ import { AuthRouter } from './AuthRouter';
 import { DashBoardRoutes } from './DashBoardRoutes';
 import { PrivateRoute } from './PrivateRoute';
 import { PublicRoute } from './PublicRoute';
+import { ProtectedRoute } from './ProtectedRoute';
+import { LoginEmployeeRouter } from './LoginEmployeeRouter';
+import { RegisterPage } from '../pages/authentication/RegisterPage';
+import { RegisterRouter } from './RegisterRouter';
 
 export const AppRouter = () => {
 
@@ -29,10 +33,9 @@ export const AppRouter = () => {
                     </PublicRoute>
                 }
                 />
-
                 <Route path="/*" element={
                     <PrivateRoute>
-                        <DashBoardRoutes/>
+                        <DashBoardRoutes />
                     </PrivateRoute>
                 }
                 />
