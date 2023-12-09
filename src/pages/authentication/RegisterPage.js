@@ -13,9 +13,9 @@ export const RegisterPage = () => {
     const styles = useStyles()
 
     const initialState = {
-        username: '',
-        email: '',
-        password: ''
+        tenant_id: '',
+        client_id: '',
+        client_secret: ''
     };
 
     const [form, handleInputChange, reset] = useForm(initialState);
@@ -53,18 +53,18 @@ export const RegisterPage = () => {
             <h3>Iniciar Sesion</h3>
             <form noValidate autoComplete="off" onSubmit={onSubmit}>
                 <div className={styles.field}>
-                    <Label htmlFor={username}>Usario</Label>
-                    <Input appearance="underline" name="username" value={form.username} onChange={handleInputChange} />
+                    <Label required>Tenant ID</Label>
+                    <Input appearance="underline" name="tenant_id" value={form.tenant_id} onChange={handleInputChange} />
                 </div>
 
                 <div className={styles.field}>
-                    <Label htmlFor={emailId}>Email</Label>
-                    <Input appearance="underline" name="email" value={form.email} onChange={handleInputChange} />
+                    <Label required>Client ID</Label>
+                    <Input appearance="underline" name="client_id" value={form.client_id} onChange={handleInputChange} />
                 </div>
 
                 <div className={styles.field}>
-                    <Label htmlFor={passwordId}>Password</Label>
-                    <Input appearance="underline" name="password" value={form.password} onChange={handleInputChange} />
+                    <Label required>Client Secret</Label>
+                    <Input appearance="underline" name="client_secret" value={form.client_secret} onChange={handleInputChange} />
                 </div>
                 <div className={styles.wrapper}>
                     <Button appearance="secondary" shape='square' onClick={reset}>
