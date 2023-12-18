@@ -26,15 +26,15 @@ export const PivotComponentProfile = () => {
                     <DetailsProfile />
                 </PivotItem>
 
-                <PivotItem headerText="Contactos personals">
+                <PivotItem headerText="Contactos personales">
                     <ContactsProfile />
                 </PivotItem>
 
-                <PivotItem headerText="Numeros de identificacion">
+                <PivotItem headerText="Números de identificacion">
                     <NumberIdsProfile />
                 </PivotItem>
 
-                <PivotItem headerText="Mi metodo de pago">
+                <PivotItem headerText="Mi metódo de pago">
                     <PaymentMethodProfile />
                 </PivotItem>
 

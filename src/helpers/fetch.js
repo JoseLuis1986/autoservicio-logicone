@@ -15,6 +15,7 @@ export const fetchWithoutToken = async (endpoint, data, method = 'GET') => {
             }
         }
     } else {
+        console.log(data)
         try {
             const resp = await fetch(url, {
                 method,
@@ -34,8 +35,10 @@ export const fetchWithoutToken = async (endpoint, data, method = 'GET') => {
 }
 
 
-export const fetchWithToken = async (endpoint, data, method = 'GET') => {
+export const fetchWithToken = async (endpoint, data= {}, method = 'GET') => {
 
+    console.log(endpoint);
+    
     const url = `${baseUrl}/${endpoint}`;
     const token = localStorage.getItem('token') || undefined;
 
@@ -43,12 +46,13 @@ export const fetchWithToken = async (endpoint, data, method = 'GET') => {
         try {
             const resp = await fetch(url, {
                 headers: {
-                    'x-token': token
+                    'authorization': 'Bearer '+token
                 }
             });
             const result = await resp.json();
             return result;
         } catch (err) {
+            console.log('error en el servidor', err);
             return {
                 error: err.message
             }
@@ -59,7 +63,7 @@ export const fetchWithToken = async (endpoint, data, method = 'GET') => {
                 method,
                 headers: {
                     'Content-type': 'application/json',
-                    'x-token': token
+                    'Authorization': 'Bearer '+ token
                 },
                 body: JSON.stringify(data)
             });

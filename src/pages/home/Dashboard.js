@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, shorthands, makeStyles, Link } from '@fluentui/react-components';
 import { Pen16Regular } from '@fluentui/react-icons';
 import { useNavigate } from 'react-router-dom';
 import { PivotComponentHome } from '../../components/PivotComponentHome';
+import { AuthContext } from '../../auth/AuthContext';
 
 
 const useStyles = makeStyles({
@@ -42,6 +43,20 @@ const useStyles = makeStyles({
 export const Dashboard = () => {
     const styles = useStyles();
     const navigate = useNavigate();
+    const { auth } = useContext(AuthContext);
+    const [employee, setEmployee] = useState([])
+
+    console.log(!auth.user)
+    useEffect(() => {
+      if (auth.user) {
+        const emp = auth.user;
+        setEmployee(emp)
+      }
+    }, [])
+    
+    // const user = auth?.user;
+    console.log('mi usuario', employee)
+    // console.log(user.Name)
 
     const handleClick = () => {
         navigate('/profile')
@@ -59,17 +74,17 @@ export const Dashboard = () => {
                         color="white"
                         active="active"
                         activeAppearance="shadow"
-                        name="Katri Athokas"
+                        name={`${employee.Name}`}
                         image={{
-                            src: "https://fabricweb.azureedge.net/fabric-website/assets/images/avatar/KatriAthokas.jpg",
+                            src: `data:image/jpeg;base64,${employee.imagenavatar}`,
                             width: "50px"
                         }}
                     />
                 </div>
                 <div className={styles.grid2}>
-                    <div className={styles.grid1}>Katri Athokas</div>
+                    <div className={styles.grid1}>{employee.Name}</div>
                     <div className={styles.grid2}>Sales & Marketing</div>
-                    <div className={styles.grid2}>Marketing Executive</div>
+                    <div className={styles.grid2}>{employee.TitleId}</div>
                     <div className={styles.grid2}>
                         <div style={{ fontSize: '24px' }}>
                             <Link onClick={() => handleClick()} style={{ fontSize: "18px" }}>

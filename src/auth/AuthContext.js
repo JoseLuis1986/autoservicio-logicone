@@ -10,119 +10,118 @@ const initialState = {
     uid: null,
     checking: true,
     logged: false,
-    name: null,
-    email: null,
-    department: null
+    user: {},
+    clave_access: null
 };
+
+console.log(initialState);
 
 export const AuthProvider = ({ children }) => {
 
     const [auth, setAuth] = useState(initialState);
     const { dispatch } = useContext(AlertContext);
 
-    const login = async (email, password) => {
 
-        const resp = await fetchWithoutToken('login', { email, password }, 'POST');
-
-        if (resp.ok) {
+    const register = async (data) => {
+        // const { tenant_id, client_id, client_secret, grant_type, resource } = data; 
+        const resp = await fetchWithoutToken('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
+        console.log(resp)
+        if (resp.success) {
+            //guardo el token
             localStorage.setItem('token', resp.token);
-            const { usuario } = resp;
+            // const { usuario } = resp;
 
+            console.log(resp);
+
+            console.log("Autenticado!!");
+
+            return { ok: true };
+        }
+        // console.log(resp)
+        dispatch({
+            type: types.newIntent,
+            payload: {
+                intent: 'error',
+                messages: resp.msg
+            }
+        });
+        return { ok: false }
+    };
+
+    const login = async (values) => {
+        const resp = await fetchWithToken('login', values, 'POST');
+        if (resp.ok) {
+            const { ClaveAccess, CodigoError, DescripcionError, datosUser } = resp.usuario;
+            console.log('datos de usuario en el login', datosUser)
             setAuth({
-                uid: usuario.uid,
                 checking: false,
-                logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
+                // logged: true,
+                user: datosUser,
+                clave_access: ClaveAccess
             })
-            dispatch({ type: types.cleanMessage })
+            return true;
         } if (!resp.ok) {
             dispatch({
                 type: types.newIntent,
                 payload: {
                     intent: 'error',
-                    messages: resp.msg ? resp.msg : (resp.error || resp.errors.email.msg)
+                    messages: resp.msg ? resp.msg : (resp.error || resp.msg)
                 }
             });
 
-            return;
+            return false;
         }
     };
 
-    const register = async (name, email, password, department) => {
-
-        const resp = await fetchWithoutToken('login/new', { name, email, password, department }, 'POST');
-
-        if (resp.ok) {
-            localStorage.setItem('token', resp.token);
-
-            const { usuario } = resp;
-
-            console.log(usuario);
-
+    const accessKey = async (key) => {
+        console.log('key que llega', key)
+        if (key === auth.clave_access) {
+            console.log("es igual entro aqui")
+            localStorage.setItem('user', JSON.stringify(auth.user));
             setAuth({
-                uid: usuario.uid,
+                user: auth.user,
                 checking: false,
                 logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
             })
-            // console.log("Autenticado!!");
-
-            return true;
+            return true
         }
-
-        return resp.msg;
-    };
-
+        return false
+    }
 
     const verifyToken = useCallback(async () => {
 
         const token = localStorage.getItem('token');
-
+        console.log('el token', !token)
+        //si token no existe
         if (!token) {
             setAuth({
-                uid: null,
                 checking: false,
                 logged: false,
-                name: null,
-                email: null,
-                department: null
+                user: {},
+                clave_access: null
             })
 
             return false;
         }
-        const resp = await fetchWithToken('login/renew');
-        if (resp.ok) {
-            localStorage.setItem('token', resp.token);
-
-            const { usuario } = resp;
-
-            console.log(usuario);
-
+        // const resp = await fetchWithToken('login');
+        const resp = JSON.parse(localStorage.getItem('user'))
+        if (!resp) {
             setAuth({
-                uid: usuario.uid,
-                checking: false,
-                logged: true,
-                name: usuario.name,
-                email: usuario.email,
-                department: usuario.department
-            })
-            console.log("Autenticado!!");
-            return true;
-        } else {
-            setAuth({
-                uid: null,
                 checking: false,
                 logged: false,
-                name: null,
-                email: null,
-                department: null
+                user: {},
+                clave_access: null
+            })
+            console.log("No Autenticado!!");
+            return false;
+        } else {
+            setAuth({
+                checking: false,
+                logged: true,
+                user: resp
             })
 
-            return false;
+            return true;
         }
 
     }, []);
@@ -130,12 +129,15 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
-
+        localStorage.removeItem('user');
         // dispatch({ type: types.closeSession });
 
         setAuth({
+            uid: null,
             checking: false,
-            logged: false
+            hasToken: false,
+            logged: false,
+            clave_access: null
         });
 
         dispatch({ type: types.cleanMessage })
@@ -149,6 +151,7 @@ export const AuthProvider = ({ children }) => {
             login,
             register,
             verifyToken,
+            accessKey,
             logout,
         }}>
             {children}

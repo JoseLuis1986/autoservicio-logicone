@@ -7,6 +7,7 @@ export const PublicRoute = ({ children }) => {
 
     const { auth } = useContext(AuthContext);
 
+    console.log("ruta publica", auth);
     return auth.logged
         ? <Navigate to="/" />
         : children

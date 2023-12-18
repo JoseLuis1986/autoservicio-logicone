@@ -6,9 +6,12 @@ import { DashBoardRoutes } from './DashBoardRoutes';
 import { PrivateRoute } from './PrivateRoute';
 import { PublicRoute } from './PublicRoute';
 
+
 export const AppRouter = () => {
 
     const { auth, verifyToken } = useContext(AuthContext);
+
+    console.log('app router', auth)
 
     useEffect(() => {
 
@@ -29,10 +32,9 @@ export const AppRouter = () => {
                     </PublicRoute>
                 }
                 />
-
                 <Route path="/*" element={
                     <PrivateRoute>
-                        <DashBoardRoutes/>
+                        <DashBoardRoutes />
                     </PrivateRoute>
                 }
                 />
