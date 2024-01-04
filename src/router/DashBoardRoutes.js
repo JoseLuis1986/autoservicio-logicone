@@ -7,6 +7,7 @@ import { SalaryReceipt } from '../pages/payments_receipt/SalaryReceipt';
 import { Permissions } from '../pages/permission_request/Permissions';
 import { HistoryPermissions } from '../pages/permission_request/HistoryPermissions';
 import { ErrorPage } from '../pages/errorPage/ErrorPage';
+import { SalaryDescription } from '../pages/payments_receipt/SalaryDescription';
 
 
 export const DashBoardRoutes = () => {
@@ -16,6 +17,7 @@ export const DashBoardRoutes = () => {
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/salary-receipt" element={<SalaryReceipt />} />
+                    <Route path="/salary-description" element={<SalaryDescription />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path='/permissions' element={<Permissions />} />
                     <Route path='/history-permissions' element={<HistoryPermissions />} />

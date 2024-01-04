@@ -7,8 +7,6 @@ import { MessagesInfo } from '../components/messages/MessagesInfo';
 
 
 export const RegisterRouter = () => {
-    // const [isConfigured, setIsConfigured] = useState(false)
-    // const isToken = localStorage.getItem('token');
     return (
         <div className="App">
             <div className="App-login">

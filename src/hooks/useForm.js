@@ -16,7 +16,6 @@ export const useForm = (initialState = {}) => {
     }, []);
     
     const reset = () => {
-        console.log('llego aqui');
         setValues(initialState);
     }
 

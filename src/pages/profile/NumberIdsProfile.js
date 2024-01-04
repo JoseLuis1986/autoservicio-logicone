@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../auth/AuthContext';
 import { CommandBar, DetailsList, Spinner } from '@fluentui/react';
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
-import { numbersIds } from '../../helpers/dataHelper';
+import { useFetch } from '../../hooks/useFetch';
 
 const overflowProps = { ariaLabel: 'More commands' };
 
@@ -18,16 +18,13 @@ const columns = [
 ];
 
 export const NumberIdsProfile = () => {
-  const [items, setItems] = useState([]);
   const { auth } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
+  const { PartyNumber } = auth.user;
+  const url = 'employee/personal-ids';
+  const params = new URLSearchParams({ PartyNumber });
+  const [{ data, loading, error }, handleCancelRequest] = useFetch(url + '?' + params);
 
-  useEffect(() => {
-    const { value } = JSON.parse(JSON.stringify(numbersIds));
-    setItems(value);
-    setLoading(false);
-  }, [])
-
+  console.log("first", data);
   const handleChangeRow = (row, i) => {
     console.log(row);
     console.log(i);
@@ -58,7 +55,7 @@ export const NumberIdsProfile = () => {
               :
               (
                 <DetailsList
-                  items={items}
+                  items={!!data && data}
                   columns={columns}
                   onItemInvoked={(item, index) => handleChangeRow(item, index)}
                 // onColumnHeaderContextMenu={(column, ev) => console.log(`column ${column.key} contextmenu opened.`)}

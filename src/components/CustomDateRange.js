@@ -29,8 +29,10 @@ const onFormatDate = (date) => {
   return !date ? '' : (date.getFullYear()) + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 };
 
-export const DateRange = ({ handleDateSelect }) => {
+export const CustomDateRange = ({ handleInputChange, values }) => {
   const styles = useStyles();
+  console.log(values)
+  const { start_date, end_date } = values;
   const [value, setValue] = useState(null);//eslint-disable-line
   const [datestr, setDatestr] = useState({
     start_date: null,
@@ -58,29 +60,47 @@ export const DateRange = ({ handleDateSelect }) => {
     [value],
   );
 
-  const handleClickDate = () => {
-    const { start_date, end_date } = datestr;
-    const d1 = start_date === null;
-    const d2 = end_date === null;
+  // const handleClickDate = () => {
+  //   const { start_date, end_date } = datestr;
+  //   const d1 = start_date === null;
+  //   const d2 = end_date === null;
 
-    if (d1 || d2) {
-      // setDatestr({ start_date: "", end_date: "" });
-      dispatch({
-        type: types.newIntent,
-        payload: {
-          intent: 'error',
-          messages: 'Debe rellenar el formulario'
-        }
-      });
-    } else {
-      const data = {
-        start_date: onFormatDate(start_date),
-        end_date: onFormatDate(end_date)
-      }
-      handleDateSelect(data)
-    }
+  //   if (d1 || d2) {
+  //     // setDatestr({ start_date: "", end_date: "" });
+  //     dispatch({
+  //       type: types.newIntent,
+  //       payload: {
+  //         intent: 'error',
+  //         messages: 'Debe rellenar el formulario'
+  //       }
+  //     });
+  //   } else {
+  //     const data = {
+  //       start_date: onFormatDate(start_date),
+  //       end_date: onFormatDate(end_date)
+  //     }
+  //     handleDateSelect(data)
+  //   }
+  // }
+
+
+  const onInputChange = (dt) => {
+    console.log(dt);
+    // const data = Object.values(dt[0])
+
+    // const key = Object.keys(dt);
+    // const val = dt && Object.values(dt)
+    // console.log(key)
+    // console.log(val)
+    // const val1 = !!val && dayjs(val).format('YYYY-MM-DD');
+    // if(val1 === 'Invalid Date') {
+    //   return console.log('no hay fecha seleccionada')
+    // }
+    // const newValue = {
+    //   [key]: val1
+    // }
+    // handleInputChange(dt)
   }
-
 
   return (
     <div className={styles.container}>
@@ -91,8 +111,9 @@ export const DateRange = ({ handleDateSelect }) => {
           label="Start date"
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
-          value={datestr.start_date}
-          onSelectDate={(date) => setDatestr({ ...datestr, start_date: date })}
+          // value={start_date}
+          // onSelectDate={(date) => setDatestr({ ...datestr, start_date: date })}
+          onSelectDate={(date) => handleInputChange({ start_date: date && dayjs(date).format('YYYY-MM-DD') })}
           formatDate={onFormatDate}
           parseDateFromString={onParseDateFromString}
           className={styles.control1}
@@ -108,8 +129,9 @@ export const DateRange = ({ handleDateSelect }) => {
           label="Start date"
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
-          value={datestr.end_date}
-          onSelectDate={(date) => setDatestr({ ...datestr, end_date: date })}
+          // value={end_date}
+          // onSelectDate={(date) => setDatestr({ ...datestr, end_date: date })}
+          onSelectDate={(date) => handleInputChange({ end_date: date && dayjs(date).format('YYYY-MM-DD') })}
           formatDate={onFormatDate}
           parseDateFromString={onParseDateFromString}
           className={styles.control1}
@@ -118,14 +140,14 @@ export const DateRange = ({ handleDateSelect }) => {
           placeholder="Select a date..."
         />
       </div>
-      <div className={styles.control}>
+      {/* <div className={styles.control}>
         <Button
           className={styles.button}
           onClick={() => handleClickDate()}
         >
           Consultar
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };

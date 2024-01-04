@@ -8,11 +8,6 @@ import { MessagesInfo } from '../components/messages/MessagesInfo';
 
 
 export const AuthRouter = () => {
-    // const [isConfigured, setIsConfigured] = useState(false)
-    // const isToken = localStorage.getItem('token');
-    const handleModal = () => {
-
-    };
 
     return (
         <div className="App">

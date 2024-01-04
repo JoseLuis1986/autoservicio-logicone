@@ -36,7 +36,6 @@ export const LoginPage = () => {
             Identification,
             Nombre
         }
-        // console.log(stringDta)
         // TODO: llamar el backend
         const result = await login(data);
         if (result) {

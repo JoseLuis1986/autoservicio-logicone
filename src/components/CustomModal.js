@@ -54,7 +54,6 @@ export const CustomModal = ({ isModalOpen }) => {
     const handleSubmit = async(ev) => {
         ev.preventDefault();
         const ok = await accessKey(inputValue)
-        console.log('que me llega aqui', ok);
         if (!ok) {
             setInputValue('');
             return alert("clave incorrecta!");

@@ -5,10 +5,12 @@
   "dependencies": {
     "@fluentui/react": "^8.112.9",
     "@fluentui/react-components": "^9.41.0",
+    "@react-pdf/renderer": "^3.1.14",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.11.4",
+    "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.11",

@@ -8,7 +8,6 @@ import { AuthContext } from '../../auth/AuthContext';
 import { fetchWithoutToken } from '../../helpers/fetch';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 
-// const token = localStorage.getItem('token')
 
 export const RegisterPage = () => {
     const [loading, setLoading] = useState(true)
@@ -17,7 +16,6 @@ export const RegisterPage = () => {
     const navigate = useNavigate();
     const styles = useStyles()
 
-    // console.log("register page", token);
     useEffect(() => {
         const getConfig = async () => {
             //se verifica si existe un registro de configuracion 
@@ -26,8 +24,8 @@ export const RegisterPage = () => {
                 Si existe una configuracion previa se navega directamente al login del empleado
                 y se almacena el token en localstorage
             }*/
-            if (config.ok) {
-                localStorage.setItem('token', config.token)
+            if (config.success) {
+                localStorage.setItem('token', JSON.stringify(config.token))
                 setLoading(false)
                 navigate('/auth/login')
             } else {
@@ -59,11 +57,9 @@ export const RegisterPage = () => {
             client_id,
             client_secret
         }
-        console.log(data)
         const result = await register(data);
-        console.log('mi respuesta del registro', result);
-
-        if (result.ok) {
+        
+        if (result.success) {
             navigate("/auth/login")
         }
         // const msg = await register(username, email, password);

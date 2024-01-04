@@ -1,4 +1,3 @@
-
 const baseUrl = process.env.REACT_APP_API_URL;
 
 export const fetchWithoutToken = async (endpoint, data, method = 'GET') => {
@@ -15,7 +14,6 @@ export const fetchWithoutToken = async (endpoint, data, method = 'GET') => {
             }
         }
     } else {
-        console.log(data)
         try {
             const resp = await fetch(url, {
                 method,
@@ -35,24 +33,22 @@ export const fetchWithoutToken = async (endpoint, data, method = 'GET') => {
 }
 
 
-export const fetchWithToken = async (endpoint, data= {}, method = 'GET') => {
-
-    console.log(endpoint);
-    
+export const fetchWithToken = async (endpoint, data = {}, method = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
-    const token = localStorage.getItem('token') || undefined;
+    const token = JSON.parse(localStorage.getItem('token')) || undefined;
+    const { access_token } = token;
+    // const timeExpire = await getTimeExpire(not_before);
 
     if (method === 'GET') {
         try {
             const resp = await fetch(url, {
                 headers: {
-                    'authorization': 'Bearer '+token
+                    'authorization': access_token
                 }
             });
             const result = await resp.json();
             return result;
         } catch (err) {
-            console.log('error en el servidor', err);
             return {
                 error: err.message
             }
@@ -63,17 +59,16 @@ export const fetchWithToken = async (endpoint, data= {}, method = 'GET') => {
                 method,
                 headers: {
                     'Content-type': 'application/json',
-                    'Authorization': 'Bearer '+ token
+                    'Authorization': access_token
                 },
                 body: JSON.stringify(data)
             });
             const result = await resp.json();
             return result;
         } catch (err) {
-            console.log(err);
             return {
                 error: err.message
-           }
+            }
         }
     }
 }

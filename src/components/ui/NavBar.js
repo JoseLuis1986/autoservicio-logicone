@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { DefaultPalette, Stack } from '@fluentui/react';
+import React, { useContext, useState, useEffect } from 'react';
+import { DefaultPalette, Stack, Slider } from '@fluentui/react';
 import { GridDots24Filled, Dismiss24Regular, LineHorizontal320Regular } from '@fluentui/react-icons';
 import { Button, Drawer, DrawerBody, DrawerHeader, DrawerHeaderTitle, tokens, makeStyles, shorthands } from '@fluentui/react-components';
 import { Nav } from '@fluentui/react/lib/Nav';
@@ -91,52 +91,6 @@ const navLinkGroups = [
         ],
     },
 ];
-// Styles definition
-const stackStyles = {
-    root: {
-        background: DefaultPalette.blueDark,
-    },
-};
-
-const stackItemStyles = {
-    root: {
-        alignItems: 'center',
-        background: 'transparent',
-        color: DefaultPalette.white,
-        display: 'flex',
-        height: 50,
-        justifyContent: 'left',
-    },
-};
-
-const stackButtonLogo = {
-    root: {
-        ...shorthands.padding("0px", "0px", "0px", "10px"),
-        alignItems: 'center',
-        background: 'transparent',
-        color: DefaultPalette.white,
-        display: 'flex',
-        height: 50,
-        justifyContent: 'left',
-    },
-};
-
-const stackButton = {
-    root: {
-        ...shorthands.padding("0px", "0px", "0px", "10px"),
-        alignItems: 'center',
-        background: 'transparent',
-        color: DefaultPalette.white,
-        display: 'flex',
-        height: 50,
-        justifyContent: 'right'
-    },
-};
-// Tokens definition
-const stackTokens = {
-    childrenGap: 5,
-    padding: 10,
-};
 
 const navStyles = {
     root: {
@@ -172,7 +126,7 @@ const useStyles = makeStyles({
     content: {
         ...shorthands.flex(1),
         ...shorthands.padding("16px"),
-
+        backgroundColor: "#fafafafa",
         display: "grid",
         justifyContent: "flex-start",
         alignItems: "flex-start",
@@ -185,13 +139,68 @@ const useStyles = makeStyles({
         gridRowGap: tokens.spacingVerticalS,
     }
 });
+// Styles definition
+const stackStyles = {
+    root: {
+        background: DefaultPalette.blueDark,
+    },
+};
+
+const stackItemStylesStart = {
+    root: {
+        alignItems: 'center',
+        background: 'transparent',
+        color: DefaultPalette.white,
+        display: 'flex',
+        height: 50,
+        justifyContent: 'left',
+    },
+};
+
+const stackItemStylesUser = {
+    root: {
+        alignItems: 'center',
+        background: 'transparent',
+        color: DefaultPalette.white,
+        display: 'flex',
+        height: 50,
+        justifyContent: 'right',
+    },
+};
+
+const stackItemStyles = {
+    root: {
+        alignItems: 'center',
+        background: 'transparent',
+        color: DefaultPalette.white,
+        display: 'flex',
+        height: 50,
+        justifyContent: 'center',
+    },
+};
+
+// Tokens definition
+const stackTokens = {
+    childrenGap: 5,
+    padding: 10,
+};
+
 
 export const Navbar = ({ children }) => {
 
-    const { logout } = useContext(AuthContext);
-    const [isOpen, setIsOpen] = useState(false)
+    const { logout, auth } = useContext(AuthContext);
+    const [isOpen, setIsOpen] = useState(false);
+    const [employee, setEmployee] = useState([]);
     const styles = useStyles();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (auth.user) {
+            const emp = auth.user;
+            setEmployee(emp)
+        }
+    }, [])
+
 
     const handleCLickRoute = (event, element) => {
         event.preventDefault();
@@ -205,18 +214,15 @@ export const Navbar = ({ children }) => {
         <div className="parent">
             <div className="child">
                 <Stack enableScopedSelectors horizontal styles={stackStyles} tokens={stackTokens}>
-                    <Stack.Item grow styles={stackButtonLogo}>
+                    <Stack.Item grow={12} styles={stackItemStylesStart}>
                         <Button appearance="transparent" icon={<GridDots24Filled style={{ color: "white", height: 55 }} />}>
                         </Button>
+                        <h3 style={{ fontWeight: 'bold', paddingLeft: '25px' }}>Finances and Operations</h3>
                     </Stack.Item>
-                    <Stack.Item grow={2} styles={stackItemStyles}>
-                        <h3 style={{ fontWeight: 'bold' }}>Finances and Operations</h3>
+                    <Stack.Item grow={12} styles={stackItemStylesUser}>
+                        <h3 style={{ fontWeight: 'bold' }}>{employee.Name}</h3>
                     </Stack.Item>
-                    <Stack.Item grow={2} styles={stackItemStyles}>
-                    </Stack.Item>
-                    <Stack.Item grow={2} styles={stackItemStyles}>
-                    </Stack.Item>
-                    <Stack.Item grow={2} styles={stackButton}>
+                    <Stack.Item grow styles={stackItemStyles}>
                         <Button appearance='transparent' onClick={logout}>
                             <h4 style={{ color: "white" }}>Salir</h4>
                         </Button>
@@ -263,7 +269,7 @@ export const Navbar = ({ children }) => {
                         }
                     </div>
                 </div>
-                <div className="content">{children}</div>
+                <div className="content" style={{ background: "#fafafafa" }}>{children}</div>
             </div>
             <div className="footer" style={{ background: DefaultPalette.blueDark }}>
                 <small>
