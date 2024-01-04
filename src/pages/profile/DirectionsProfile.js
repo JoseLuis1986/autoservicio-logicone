@@ -1,10 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { CommandBar, DetailsList, ShimmeredDetailsList, Spinner } from '@fluentui/react'
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
 import { AuthContext } from '../../auth/AuthContext';
 import { directionsContact } from '../../helpers/dataHelper';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { fetchWithToken } from '../../helpers/fetch';
+import { useFetch } from '../../hooks/useFetch';
 
 const overflowProps = { ariaLabel: 'More commands' };
 
@@ -18,37 +19,14 @@ const columns = [
 
 export const DirectionsProfile = () => {
     const [items, setItems] = useState([]);
-    const [loading, setLoading] = useState(true);
     const { auth } = useContext(AuthContext);
     const { PersonnelNumber } = auth.user;
-    console.log(items);
-
-    const getDir = useCallback(async () => {
-        const url = 'employee/addresses';
-        const data = await fetchWithToken(url + '?' + new URLSearchParams({ PersonnelNumber: PersonnelNumber }));
-        return data;
-    }, []);
-
-    useEffect(() => {
-        const ac = new AbortController();
-        const signal = ac.signal;
-        getDir()
-            .then((res) => {
-                if(res.ok) {
-                    setItems(res.data);
-                    setLoading(false);
-                } else {
-                    console.log('no se ha podido cargar la informacion');
-                }
-            })
-            .catch((err) => console.log(err))
-        return () => ac.abort
-    }, [])
+    const url = 'employee/addresses';
+    const { data, loading, error } = useFetch(url + '?' + new URLSearchParams({ PersonnelNumber: PersonnelNumber }));
 
     const handleChangeRow = (row, i) => {
         console.log(row);
         console.log(i);
-
     };
 
     return (
@@ -70,7 +48,7 @@ export const DirectionsProfile = () => {
                             <Spinner />
                             :
                             <DetailsList
-                                items={items}
+                                items={data}
                                 columns={columns}
                                 onItemInvoked={(item, index) => handleChangeRow(item, index)}
                             // onColumnHeaderContextMenu={(column, ev) => console.log(`column ${column.key} contextmenu opened.`)}

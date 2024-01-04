@@ -50,6 +50,7 @@ export const fetchWithToken = async (endpoint, data= {}, method = 'GET') => {
                 }
             });
             const result = await resp.json();
+            console.log('resultado', result);
             return result;
         } catch (err) {
             console.log('error en el servidor', err);
