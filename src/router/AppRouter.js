@@ -11,8 +11,6 @@ export const AppRouter = () => {
 
     const { auth, verifyToken } = useContext(AuthContext);
 
-    console.log('app router', auth)
-
     useEffect(() => {
 
         verifyToken();

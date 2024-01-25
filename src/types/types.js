@@ -7,5 +7,4 @@ export const types = {
     newIntent: '[Alerts] Load Alert',
     cleanMessage: '[Alerts] Clean Info Message',
 
-
 }

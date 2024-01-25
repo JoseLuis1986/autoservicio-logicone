@@ -16,7 +16,6 @@ export const useForm = (initialState = {}) => {
     }, []);
     
     const reset = () => {
-        console.log('llego aqui');
         setValues(initialState);
     }
 
@@ -35,6 +34,12 @@ export const useForm = (initialState = {}) => {
         })
     }
 
+    const handleInputImage = ({ target }) => {
+        setValues({
+            ...values,
+            [target.name]: target.files[0]
+        })
+    }
 
-    return [values, handleInputChange, toggleCheck, reset];
+    return [values, handleInputChange, handleInputImage, toggleCheck, reset];
 }

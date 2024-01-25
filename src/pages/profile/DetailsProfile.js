@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../auth/AuthContext';
 import { CommandBar, DetailsList, Spinner } from '@fluentui/react';
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
-import { detailsContact } from '../../helpers/dataHelper';
+import { useFetch } from '../../hooks/useFetch';
 
 const overflowProps = { ariaLabel: 'More commands' };
 
@@ -17,15 +17,11 @@ const columns = [
 ];
 
 export const DetailsProfile = () => {
-  const [items, setItems] = useState([]);
   const { auth } = useContext(AuthContext);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const { value } = JSON.parse(JSON.stringify(detailsContact));
-        setItems(value);
-        setLoading(false);
-  }, [])
+  const { PersonnelNumber } = auth.user;
+  const url = 'employee/contacts-details';
+  const params = new URLSearchParams({ PersonnelNumber })
+  const [{ data, loading }, handleCancelRequest] = useFetch(url + '?' + params);
 
   const handleChangeRow = (row, i) => {
     console.log(row);
@@ -35,6 +31,9 @@ export const DetailsProfile = () => {
 
   return (
     <>
+      <h6 style={{ marginBlockEnd: "0em", backgroundColor: "white", height: "15px", borderBottom: "1px solid lightgray", padding: "15px" }}>
+        Mis detalles personales
+      </h6>
       <div style={{ backgroundColor: "white", paddingBottom: "10px" }}>
         <CommandBar
           items={_items}
@@ -52,7 +51,7 @@ export const DetailsProfile = () => {
               ? (<Spinner />)
               :
               (<DetailsList
-                items={items}
+                items={!!data && data}
                 columns={columns}
                 onItemInvoked={(item, index) => handleChangeRow(item, index)}
               />)

@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, createContext } from "react";
-import { fetchWithoutToken, fetchWithToken } from "../helpers/fetch";
+import { fetchRegister, fetchWithToken } from "../helpers/fetch";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
 
@@ -14,30 +14,31 @@ const initialState = {
     clave_access: null
 };
 
-console.log(initialState);
-
 export const AuthProvider = ({ children }) => {
 
     const [auth, setAuth] = useState(initialState);
     const { dispatch } = useContext(AlertContext);
 
+    /*
+    token_type: 'Bearer',                                                                                                   
+    expires_in: '3599',                                                                                                     
+    ext_expires_in: '3599',                                                                                                 
+    expires_on: '1703170228',                                                                                               
+    not_before: '1703166328',                                                                                               
+    resource: 'https://usnconeboxax1aos.cloud.onebox.dynamics.com',                                                         
+    access_token: 
+    */
 
-    const register = async (data) => {
-        // const { tenant_id, client_id, client_secret, grant_type, resource } = data; 
-        const resp = await fetchWithoutToken('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
-        console.log(resp)
+   const register = async (data) => {
+        const resp = await fetchRegister('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
         if (resp.success) {
+            const { access_token } = resp.token;
             //guardo el token
-            localStorage.setItem('token', resp.token);
-            // const { usuario } = resp;
-
-            console.log(resp);
-
+            localStorage.setItem('token', JSON.stringify(access_token));
             console.log("Autenticado!!");
 
             return { ok: true };
         }
-        // console.log(resp)
         dispatch({
             type: types.newIntent,
             payload: {
@@ -49,10 +50,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     const login = async (values) => {
+        // renewToken();
         const resp = await fetchWithToken('login', values, 'POST');
-        if (resp.ok) {
-            const { ClaveAccess, CodigoError, DescripcionError, datosUser } = resp.usuario;
-            console.log('datos de usuario en el login', datosUser)
+        if (resp.success) {
+            const { ClaveAccess, datosUser } = resp.usuario;
             setAuth({
                 checking: false,
                 // logged: true,
@@ -60,12 +61,13 @@ export const AuthProvider = ({ children }) => {
                 clave_access: ClaveAccess
             })
             return true;
-        } if (!resp.ok) {
+        } if (!resp.success && resp.status === 401) {
+            // console.log('respuesta', resp.error.message);
             dispatch({
                 type: types.newIntent,
                 payload: {
                     intent: 'error',
-                    messages: resp.msg ? resp.msg : (resp.error || resp.msg)
+                    messages: resp.error.message
                 }
             });
 
@@ -74,9 +76,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const accessKey = async (key) => {
-        console.log('key que llega', key)
         if (key === auth.clave_access) {
-            console.log("es igual entro aqui")
             localStorage.setItem('user', JSON.stringify(auth.user));
             setAuth({
                 user: auth.user,
@@ -86,12 +86,31 @@ export const AuthProvider = ({ children }) => {
             return true
         }
         return false
+    };
+
+    const requestAccess = async (values) => {
+        const resp = await fetchWithToken('login/request-access', values, 'POST');
+        if ( resp.success ) {
+            return { ok: true, message: resp.message }
+        } else {
+           return { ok: false, message: resp.message }
+        }
     }
 
     const verifyToken = useCallback(async () => {
 
         const token = localStorage.getItem('token');
-        console.log('el token', !token)
+        if (!token) {
+            setAuth({
+                checking: false,
+                logged: false,
+                user: {},
+                clave_access: null
+            })
+
+            return false;
+        }
+        // const { access_token } = token;
         //si token no existe
         if (!token) {
             setAuth({
@@ -126,7 +145,6 @@ export const AuthProvider = ({ children }) => {
 
     }, []);
 
-
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -150,6 +168,7 @@ export const AuthProvider = ({ children }) => {
             auth,
             login,
             register,
+            requestAccess,
             verifyToken,
             accessKey,
             logout,

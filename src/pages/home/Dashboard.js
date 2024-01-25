@@ -44,9 +44,8 @@ export const Dashboard = () => {
     const styles = useStyles();
     const navigate = useNavigate();
     const { auth } = useContext(AuthContext);
-    const [employee, setEmployee] = useState([])
+    const [employee, setEmployee] = useState([]);
 
-    console.log(!auth.user)
     useEffect(() => {
       if (auth.user) {
         const emp = auth.user;
@@ -54,10 +53,6 @@ export const Dashboard = () => {
       }
     }, [])
     
-    // const user = auth?.user;
-    console.log('mi usuario', employee)
-    // console.log(user.Name)
-
     const handleClick = () => {
         navigate('/profile')
     };

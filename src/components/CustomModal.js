@@ -30,7 +30,7 @@ export const CustomModal = ({ isModalOpen }) => {
     const { accessKey } = useContext(AuthContext)
     const styles = useStyles();
     const inputElement = useRef(null);
-
+    const placeholder = 'Favor ingresar el token que le ha sido enviado a su correo electrónico.'
     useEffect(() => {
         if (inputElement.current) {
             inputElement.current.focus();
@@ -51,10 +51,9 @@ export const CustomModal = ({ isModalOpen }) => {
         }
     };
 
-    const handleSubmit = async(ev) => {
+    const handleSubmit = async (ev) => {
         ev.preventDefault();
         const ok = await accessKey(inputValue)
-        console.log('que me llega aqui', ok);
         if (!ok) {
             setInputValue('');
             return alert("clave incorrecta!");
@@ -65,35 +64,37 @@ export const CustomModal = ({ isModalOpen }) => {
     return (
         <Dialog modalType="non-modal" open={isModalOpen} >
             <DialogSurface aria-describedby={undefined}>
-                <form onSubmit={handleSubmit} style={{ height: '180px' }}>
+                <form onSubmit={handleSubmit} style={{ height: '240px' }}>
                     <DialogBody>
-                        <DialogTitle>Clave de acceso</DialogTitle>
+                        <DialogTitle>
+                            Clave de acceso
+                            <p style={{ fontSize: 12, marginBottom: "0px" }}>{placeholder}</p>
+                        </DialogTitle>
                         <DialogContent className={styles.content}>
+                            <TextField
+                                id="customInput"
+                                type="text"
+                                ref={inputElement}
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                borderless={true}
+                                style={{ color: 'transparent', margin: '0px', padding: '0px' }}
+                                maxLength={4}
+                            />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    marginTop: '10px',
+                                    background: "#fafafa",
+                                    justifyContent: "center",
+                                    fontSize: "24"
+                                }}>
+                                {renderUnderlinedChars()}
+                            </div>
                             <div>
-                                <TextField
-                                    id="customInput"
-                                    type="text"
-                                    ref={inputElement}
-                                    value={inputValue}
-                                    placeholder="coloque su clave de 4 digitos"
-                                    onChange={handleInputChange}
-                                    borderless={true}
-                                    style={{ color: 'transparent' }}
-                                    maxLength={4}
-                                />
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        marginTop: '10px',
-                                        background: "#fafafa",
-                                        justifyContent: "center",
-                                        fontSize: "30"
-                                    }}>
-                                    {renderUnderlinedChars()}
-                                </div>
                             </div>
                         </DialogContent>
-                        <DialogActions>
+                        <DialogActions style={{ bottom: '20px', position: 'absolute' }}>
                             <DialogTrigger disableButtonEnhancement>
                                 <Button appearance="secondary">Close</Button>
                             </DialogTrigger>
@@ -107,133 +108,3 @@ export const CustomModal = ({ isModalOpen }) => {
         </Dialog>
     );
 };
-
-
-// import React from 'react'
-// import { useId, useBoolean } from '@fluentui/react-hooks';
-// import {
-//     Modal,
-//     getTheme,
-//     mergeStyleSets,
-//     FontWeights,
-//     Toggle,
-//     ContextualMenu,
-// } from '@fluentui/react';
-// // import { DefaultButton, IconButton } from '@fluentui/react/lib/Button';
-// // import { LoginPage } from '../pages/authentication/LoginPage';
-// // import { RegisterPage } from '../pages/authentication/RegisterPage';
-// import { Button, Input, Label } from '@fluentui/react-components';
-// import { useForm } from '../hooks/useForm';
-
-// const dragOptions = {
-//     moveMenuItemText: 'Move',
-//     closeMenuItemText: 'Close',
-//     menu: ContextualMenu,
-//     dragHandleSelector: '.ms-Modal-scrollableContent > div:first-child',
-// };
-// const cancelIcon = { iconName: 'Cancel' };
-
-// const initialState = {
-//     accesskey: ''
-// }
-
-// export const CustomModal = ({ isModalOpen }) => {
-//     // const [isModalOpen, { setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
-//     const [isDraggable, { toggle: toggleIsDraggable }] = useBoolean(true);
-//     const { form, handleInputChange } = useForm(initialState);
-//     const titleId = useId('title');
-
-//     const onSubmit = (form) => {
-//         console.log(form.accesskey)
-//     }
-
-//     return (
-//         <div>
-//             <Toggle
-//                 styles={toggleStyles}
-//                 label="Is draggable"
-//                 inlineLabel
-//                 onChange={toggleIsDraggable}
-//                 checked={isDraggable}
-//                 disabled={isModalOpen}
-//             />
-//             {/* <DefaultButton secondaryText="Opens the Sample Modal" onClick={showModal} text="Open Modal" /> */}
-//             <Modal
-//                 titleAriaId={titleId}
-//                 isOpen={isModalOpen}
-//                 // onDismiss={hideModal}
-//                 isModeless={true}
-//                 containerClassName={contentStyles.container}
-//                 dragOptions={isDraggable ? dragOptions : undefined}
-//             >
-//                 {/* <div className={contentStyles.header}>
-//                     <h2 className={contentStyles.heading} id={titleId}>
-//                         Lorem Ipsum
-//                     </h2>
-//                     <IconButton
-//                         styles={iconButtonStyles}
-//                         iconProps={cancelIcon}
-//                         ariaLabel="Close popup modal"
-//                         // onClick={hideModal}
-//                     />
-//                 </div> */}
-
-//                 <div className={contentStyles.body}>
-//                     <form noValidate autoComplete="off" onSubmit={onSubmit}>
-//                         <div>
-//                             <Label required>clave de acceso</Label>
-//                             <Input appearance="underline" name="accesskey" onChange={handleInputChange} />
-//                         </div>
-//                         <Button type='submit' appearance="primary" shape='square' >
-//                             Siguiente
-//                         </Button>
-//                     </form>
-//                 </div>
-//             </Modal>
-//         </div>
-//     );
-// };
-
-// const theme = getTheme();
-// const contentStyles = mergeStyleSets({
-//     container: {
-//         display: 'flex',
-//         flexFlow: 'column nowrap',
-//         alignItems: 'stretch',
-//     },
-//     header: {
-//         flex: '1 1 auto',
-//         borderTop: `4px solid ${theme.palette.themePrimary}`,
-//         color: theme.palette.neutralPrimary,
-//         display: 'flex',
-//         alignItems: 'center',
-//         fontWeight: FontWeights.semibold,
-//         padding: '12px 12px 14px 24px',
-//     },
-//     heading: {
-//         color: theme.palette.neutralPrimary,
-//         fontWeight: FontWeights.semibold,
-//         fontSize: 'inherit',
-//         margin: '0',
-//     },
-//     body: {
-//         display: 'flex',
-//         // flex: '4 4 auto',
-//         padding: '0 24px 24px 24px',
-//         width: '600px',
-//         justifyContent: "center"
-//         // overflowY: 'hidden',
-//     },
-// });
-// const toggleStyles = { root: { marginBottom: '20px' } };
-// const iconButtonStyles = {
-//     root: {
-//         color: theme.palette.neutralPrimary,
-//         marginLeft: 'auto',
-//         marginTop: '4px',
-//         marginRight: '2px',
-//     },
-//     rootHovered: {
-//         color: theme.palette.neutralDark,
-//     },
-// };

@@ -11,7 +11,8 @@ export const useStyles = makeStyles({
         justifyContent: "center",
         minWidth: "320px",
         minHeight: "338px",
-        textAlign: "left"
+        textAlign: "left",
+        opacity: '0.9'
     },
     field: {
         ...shorthands.padding("5px"),
@@ -22,9 +23,10 @@ export const useStyles = makeStyles({
         // ...shorthands.padding(tokens.spacingHorizontalMNudge),
     },
     wrapper: {
-        ...shorthands.padding("15px", "0px", "0px", "0px"),
-        columnGap: "2px",
+        ...shorthands.padding("15px", "0px", "10px", "0px"),
+        columnGap: "15px",
         display: "flex",
-        justifyContent: "flex-end"
+        width: '425px'
+        // justifyContent: "space-between"
     },
 });

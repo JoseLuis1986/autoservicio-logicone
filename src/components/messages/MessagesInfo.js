@@ -18,9 +18,9 @@ const ErrorExample = ({ resetChoice, msj }) => (
     dismissButtonAriaLabel="Close"
   >
     {msj}
-    <Link href="www.bing.com" target="_blank" underline>
+    {/* <Link href="www.bing.com" target="_blank" underline>
       Visit our website.
-    </Link>
+    </Link> */}
   </MessageBar>
 );
 
@@ -62,9 +62,9 @@ const SuccessExample = ({ resetChoice, msj }) => (
     isMultiline={false}
   >
     {msj}.
-    <Link href="www.bing.com" target="_blank" underline>
+    {/* <Link href="www.bing.com" target="_blank" underline>
       Visit our website.
-    </Link>
+    </Link> */}
   </MessageBar>
 );
 
@@ -95,9 +95,9 @@ const WarningExample2 = ({ resetChoice, msj }) => (
     }
   >
     <b>{msj}</b>
-    <Link href="www.bing.com" target="_blank" underline>
+    {/* <Link href="www.bing.com" target="_blank" underline>
       Visit our website.
-    </Link>
+    </Link> */}
   </MessageBar>
 );
 

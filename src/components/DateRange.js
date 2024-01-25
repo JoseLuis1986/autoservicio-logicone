@@ -1,8 +1,9 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
 import { Button, makeStyles, shorthands } from "@fluentui/react-components";
-import { DatePicker, defaultDatePickerStrings } from "@fluentui/react";
+import { DatePicker, classNamesFunction, defaultDatePickerStrings } from "@fluentui/react";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
+import dayjs from "dayjs";
 
 const useStyles = makeStyles({
   container: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles({
   },
   control1: {
     alignContent: "space-between",
-    width: "300px"
+    width: "200px"
   },
   button: {
     position: "relative",
@@ -24,9 +25,23 @@ const useStyles = makeStyles({
   }
 });
 
+const getZeroFormat = (m) => {
+  if (m >=10 ){
+    return m
+  } else {
+    return '0'+m
+  }
+}
+
+
 const onFormatDate = (date) => {
-  return !date ? '' : (date.getFullYear()) + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+  return !date ? '' : getZeroFormat(date.getDate()) + '-' + (getZeroFormat(date.getMonth() + 1)) + '-' + (date.getFullYear());
 };
+
+const onFormatDateYmD = (date) => {
+  return !date ? '' : (date.getFullYear()) + '-' + (getZeroFormat(date.getMonth() + 1)) + '-' +  getZeroFormat(date.getDate());
+};
+
 
 export const DateRange = ({ handleDateSelect }) => {
   const styles = useStyles();
@@ -40,7 +55,6 @@ export const DateRange = ({ handleDateSelect }) => {
   const datePickerRef1 = useRef(null);
 
   const onParseDateFromString = useCallback((newValue) => {
-    console.log(newValue)
     const previousValue = value || new Date();
     const newValueParts = (newValue || '').trim().split('-');
     const day =
@@ -62,7 +76,8 @@ export const DateRange = ({ handleDateSelect }) => {
     const { start_date, end_date } = datestr;
     const d1 = start_date === null;
     const d2 = end_date === null;
-
+    console.log(start_date);
+    console.log(end_date);
     if (d1 || d2) {
       // setDatestr({ start_date: "", end_date: "" });
       dispatch({
@@ -74,19 +89,21 @@ export const DateRange = ({ handleDateSelect }) => {
       });
     } else {
       const data = {
-        start_date: onFormatDate(start_date),
-        end_date: onFormatDate(end_date)
+        start_date: onFormatDateYmD(start_date),
+        end_date: onFormatDateYmD(end_date)
       }
       handleDateSelect(data)
-      console.log(data);
     }
   }
+
+
   return (
     <div className={styles.container}>
       <div className={styles.control}>
         <DatePicker
+          name='start_date'
           componentRef={datePickerRef}
-          label="Start date"
+          label="Fecha de inicio"
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
           value={datestr.start_date}
@@ -103,7 +120,7 @@ export const DateRange = ({ handleDateSelect }) => {
       <div className={styles.control}>
         <DatePicker
           componentRef={datePickerRef1}
-          label="Start date"
+          label="Fecha final"
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
           value={datestr.end_date}

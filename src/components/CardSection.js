@@ -4,8 +4,9 @@ import {
     shorthands,
     Text,
 } from "@fluentui/react-components";
-import { Calendar48Regular, LineHorizontal1Dashes28Filled, TextBulletListSquare48Regular } from "@fluentui/react-icons";
+import { Calendar48Regular, LineHorizontal1Dashes28Filled, TextBulletListSquare48Regular, Archive48Regular } from "@fluentui/react-icons";
 import { Card, CardHeader } from "@fluentui/react-components";
+import { useNavigate } from "react-router-dom";
 
 
 const useStyles = makeStyles({
@@ -35,16 +36,17 @@ const useStyles = makeStyles({
 
 export const CardSection = () => {
     const styles = useStyles();
+    const navigate = useNavigate();
 
     return (
         <div className={styles.main}>
-            <Card className={styles.card} style={{ backgroundColor: "#115ea3" }} onClick={() => console.log("click here")}>
+            <Card className={styles.card} style={{ backgroundColor: "#115ea3" }} onClick={() => navigate("/permissions")}>
                 <CardHeader
-                    // image={<Calendar48Regular style={{ color: "white" }}/> ? <Calendar48Regular style={{ color: "white" }}/> : ""}
-                    header={<div style={{ color: "white" }}><Text size={900} weight="semibold" font="numeric">7</Text></div>}
+                    image={<Archive48Regular style={{ color: "white" }}/> ? <Archive48Regular style={{ color: "white" }}/> : ""}
+                    // header={<div style={{ color: "white" }}><Text size={900} weight="semibold" font="numeric"></Text></div>}
                 />
                 <p className={styles.text}>
-                    Mis elementos de trabajo
+                    Mis solicitudes de permiso
                 </p>
             </Card>
 

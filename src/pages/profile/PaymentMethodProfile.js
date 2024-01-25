@@ -3,7 +3,7 @@ import { AuthContext } from '../../auth/AuthContext';
 import { CommandBar, DetailsList, Spinner } from '@fluentui/react';
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Input, Label, tokens, makeStyles } from '@fluentui/react-components';
-import { paymentMethods } from '../../helpers/dataHelper';
+import { useFetch } from '../../hooks/useFetch';
 
 
 const useStyles = makeStyles({
@@ -11,7 +11,6 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     rowGap: tokens.spacingVerticalMNudge,
-    width: "1200px",
   },
 });
 
@@ -23,19 +22,18 @@ const columns = [
   { key: 5, name: 'Monto', fieldName: 'Mount', minWidth: 100, maxWidth: 200, isResizable: true },
   { key: 6, name: 'Resto', fieldName: 'Rest', minWidth: 100, maxWidth: 200, isResizable: true },
   { key: 7, name: 'Estado', fieldName: 'Status', minWidth: 100, maxWidth: 200, isResizable: true },
+  { key: 8, name: 'SWIFT', fieldName: 'SWIFTNo', minWidth: 100, maxWidth: 200, isResizable: true },
+  { key: 9, name: 'RoutingNumber', fieldName: 'RoutingNumber', minWidth: 100, maxWidth: 200, isResizable: true }
 ];
 
 export const PaymentMethodProfile = () => {
   const styles = useStyles();
-  const [items, setItems] = useState([]);
   const [openItems, setOpenItems] = useState([])
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const { value } = JSON.parse(JSON.stringify(paymentMethods));
-    setItems(value);
-    setLoading(false);
-  }, [])
+  const { auth } = useContext(AuthContext);
+  const { PersonnelNumber } = auth.user;
+  const url = 'employee/payments-methods';
+  const params = new URLSearchParams({ PersonnelNumber });
+  const [{ data, loading, error }, handleCancelRequest] = useFetch(url + '?' + params);
 
   const onSubmit = (row, i) => {
     console.log(row);
@@ -51,7 +49,7 @@ export const PaymentMethodProfile = () => {
   return (
     <>
       <h6 style={{ marginBlockEnd: "0em", backgroundColor: "white", height: "15px", borderBottom: "1px solid lightgray", padding: "15px" }}>
-        Mis números de identificación
+        Metódos de pago
       </h6>
       <div style={{ backgroundColor: "white", paddingBottom: "10px" }}>
         <div style={{ margin: "10px" }}>
@@ -82,7 +80,7 @@ export const PaymentMethodProfile = () => {
                       ? (<Spinner />)
                       :
                       (
-                        <DetailsList items={items} columns={columns} selectionMode={0} />
+                        <DetailsList items={!!data && data} columns={columns} selectionMode={0} />
                       )
                   }
                 </div>

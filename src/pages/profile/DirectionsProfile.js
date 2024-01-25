@@ -2,9 +2,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { CommandBar, DetailsList, ShimmeredDetailsList, Spinner } from '@fluentui/react'
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
 import { AuthContext } from '../../auth/AuthContext';
-import { directionsContact } from '../../helpers/dataHelper';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { fetchWithToken } from '../../helpers/fetch';
 import { useFetch } from '../../hooks/useFetch';
 
 const overflowProps = { ariaLabel: 'More commands' };
@@ -22,7 +19,9 @@ export const DirectionsProfile = () => {
     const { auth } = useContext(AuthContext);
     const { PersonnelNumber } = auth.user;
     const url = 'employee/addresses';
-    const { data, loading, error } = useFetch(url + '?' + new URLSearchParams({ PersonnelNumber: PersonnelNumber }));
+    const params = new URLSearchParams({ PersonnelNumber: PersonnelNumber })
+    const [{ data, loading, error }, handleCancelRequest] = useFetch(url + '?' + params);
+
 
     const handleChangeRow = (row, i) => {
         console.log(row);
@@ -31,6 +30,9 @@ export const DirectionsProfile = () => {
 
     return (
         <>
+            <h6 style={{ marginBlockEnd: "0em", backgroundColor: "white", height: "15px", borderBottom: "1px solid lightgray", padding: "15px" }}>
+                Mis direcciones
+            </h6>
             <div style={{ backgroundColor: "white", paddingBottom: "10px" }}>
                 <CommandBar
                     items={_items}
@@ -48,7 +50,7 @@ export const DirectionsProfile = () => {
                             <Spinner />
                             :
                             <DetailsList
-                                items={data}
+                                items={!!data && data}
                                 columns={columns}
                                 onItemInvoked={(item, index) => handleChangeRow(item, index)}
                             // onColumnHeaderContextMenu={(column, ev) => console.log(`column ${column.key} contextmenu opened.`)}

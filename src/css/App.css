@@ -8,7 +8,8 @@
 }
 
 .App-login {
-  background-color: #bac2da;
+  /* #bac2da */
+  background-color: transparent;  
   min-height: 100vh;
   display: flex;
   flex-direction: column;

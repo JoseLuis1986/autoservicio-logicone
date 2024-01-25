@@ -3,6 +3,7 @@ import { AuthContext } from '../../auth/AuthContext';
 import { CommandBar, DetailsList, Spinner } from '@fluentui/react';
 import { _farItems, _items, _overflowItems } from '../../utils/itemsCommandBar'
 import { contactPersonal } from '../../helpers/dataHelper';
+import { useFetch } from '../../hooks/useFetch';
 
 const overflowProps = { ariaLabel: 'More commands' };
 
@@ -15,35 +16,11 @@ const columns = [
 ];
 
 export const ContactsProfile = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { auth } = useContext(AuthContext);
-
-  useEffect(() => {
-    const { value } = JSON.parse(JSON.stringify(contactPersonal));
-    setItems(value);
-    setLoading(false);
-  }, [])
-
-  // useEffect(() => {
-  //   const ac = new AbortController();
-  //   const signal = ac.signal;
-
-  //   fetch('https://jsonplaceholder.typicode.com/users?_limit=2', { signal })
-  //     .then(response => response.json())
-  //     .then((data) => {
-  //       const addr = []
-  //       const dir = data.map((x) => addr.push(x.address)) // eslint-disable-line
-  //       setItems(addr);
-  //     })
-  //     .catch((e) => {
-  //       if (e.name === 'AbortError') {
-  //         console.log('fetch aborted')
-  //       }
-  //     })
-
-  //   return () => ac.abort
-  // }, [])
+  const { PersonnelNumber } = auth.user;
+  const url = 'employee/personal-contacts';
+  const params = new URLSearchParams({ WorkerPersonnelNumber: PersonnelNumber })
+  const [{ data, loading }, handleCancelRequest] = useFetch(url + '?' + params);
 
   const handleChangeRow = (row, i) => {
     console.log(row);
@@ -53,6 +30,9 @@ export const ContactsProfile = () => {
 
   return (
     <>
+      <h6 style={{ marginBlockEnd: "0em", backgroundColor: "white", height: "15px", borderBottom: "1px solid lightgray", padding: "15px" }}>
+        Mis contactos personales
+      </h6>
       <div style={{ backgroundColor: "white", paddingBottom: "10px" }}>
         <CommandBar
           items={_items}
@@ -71,7 +51,7 @@ export const ContactsProfile = () => {
               ? (<Spinner />)
               :
               (<DetailsList
-                items={items}
+                items={!!data && data}
                 columns={columns}
                 onItemInvoked={(item, index) => handleChangeRow(item, index)}
               />)
@@ -82,12 +62,3 @@ export const ContactsProfile = () => {
   )
 }
 
-
-
-// import React from 'react'
-
-// export const ContactsProfile = () => {
-//   return (
-//     <div>ContactsProfile</div>
-//   )
-// }
