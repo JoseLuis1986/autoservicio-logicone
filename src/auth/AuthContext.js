@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
 
    const register = async (data) => {
         const resp = await fetchRegister('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
+        console.log(resp);
         if (resp.success) {
             const { access_token } = resp.token;
             //guardo el token
@@ -43,10 +44,10 @@ export const AuthProvider = ({ children }) => {
             type: types.newIntent,
             payload: {
                 intent: 'error',
-                messages: resp.msg
+                messages: resp.error
             }
         });
-        return { ok: false }
+        return { ok: false, message: resp.error }
     };
 
     const login = async (values) => {

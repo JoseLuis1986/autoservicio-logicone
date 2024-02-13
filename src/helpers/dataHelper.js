@@ -7809,6 +7809,40 @@ const dataPayment = {
 }
 
 
+const employeesUsers = {
+    "ok": true,
+    "data": [
+        {
+            "PersonnelNumber": "000020",
+            "Name": "Julia Funderburk",
+        },
+        {
+            "PersonnelNumber": "000647",
+            "Name": "Wayne robert",
+        },
+        {
+            "PersonnelNumber": "000021",
+            "Name": "Robert Green",
+        },
+        {
+            "PersonnelNumber": "000022",
+            "Name": "Julio Tedd",
+        },
+        {
+            "PersonnelNumber": "000023",
+            "Name": "Juan Rodriguez",
+        },
+        {
+            "PersonnelNumber": "000024",
+            "Name": "Antonio Rodriguez",
+        },
+        {
+            "PersonnelNumber": "000025",
+            "Name": "Cesar Rodriguez",
+        }
+    ]
+}
+
 export {
     directionsContact,
     detailsContact,
@@ -7818,5 +7852,6 @@ export {
     payments,
     homeData,
     dataPayment,
-    taxAmount
+    taxAmount,
+    employeesUsers
 }
