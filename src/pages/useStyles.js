@@ -26,7 +26,7 @@ export const useStyles = makeStyles({
         ...shorthands.padding("15px", "0px", "10px", "0px"),
         columnGap: "15px",
         display: "flex",
-        width: '425px'
-        // justifyContent: "space-between"
+        width: '425px',
+        justifyContent: "right"
     },
 });

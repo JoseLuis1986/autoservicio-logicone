@@ -9,6 +9,7 @@ import { CustomModal } from '../../components/CustomModal';
 import { AlertContext } from '../../context/alerts/AlertContext';
 import { types } from '../../types/types';
 import { renewToken } from '../../helpers/renewToken';
+import { hasUserAdmin } from '../../helpers/hasUserAdmin';
 
 const initialForm = {
     Personnelnumber: '000046',
@@ -32,42 +33,23 @@ export const LoginPage = () => {
     const [form, handleInputChange] = useForm(initialForm);
 
     useEffect(() => {
-        renewToken()
-            .then((resp) => {
-                if (!resp.success) {
-                    // setLoading(false)
+        Promise.all([renewToken().catch((error) => console.log(error)), hasUserAdmin().catch((error) => console.log(error))]).then(
+            (values) => {
+                if (!values[0].success) {
                     dispatch({
                         type: types.newIntent,
                         payload: {
-                            intent: 'error',
-                            messages: resp.data
+                            intent: 'warning',
+                            messages: values[0].data
                         }
                     })
-                    navigate('/')
+                    return navigate('/');
                 }
+                if (values[0].success && !values[1].data.length) {
+                    return navigate('/');
+                }
+                
             })
-            .catch((err) => console.log(err))
-        // const getConfig = async () => {
-        //     //se verifica si existe un registro de configuracion 
-        //     const config = await fetchWithoutToken('login');
-        //     // console.log('mi conf', config);
-        //     /*{
-        //         Si existe una configuracion previa se navega directamente al login del empleado
-        //         y se almacena el token en localstorage
-        //     }*/
-        //     if (!config.success) {
-        //         setLoading(false)
-        //         dispatch({
-        //             type: types.newIntent,
-        //             payload: {
-        //                 intent: 'error',
-        //                 messages: config.error
-        //             }
-        //         })
-        //         navigate('/')
-        //     }
-        // }
-        // getConfig();
     }, [dispatch, navigate])
 
 

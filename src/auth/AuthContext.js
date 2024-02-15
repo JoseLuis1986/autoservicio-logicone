@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, createContext } from "react";
-import { fetchRegister, fetchWithToken } from "../helpers/fetch";
+import { fetchRegister, fetchWithToken, fetchWithoutToken } from "../helpers/fetch";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
 
@@ -76,6 +76,24 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const createUserAdmin = async (values) => {
+        console.log(values);
+        const resp = await fetchWithoutToken('login/new-useradmin', values, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
+        console.log(resp);
+        if (resp.success) {
+            console.log("Configuracion exitosa!!");
+            return { ok: true };
+        }
+        dispatch({
+            type: types.newIntent,
+            payload: {
+                intent: 'error',
+                messages: resp.error
+            }
+        });
+        return { ok: false, message: resp.error }
+    };
+
     const accessKey = async (key) => {
         if (key === auth.clave_access) {
             localStorage.setItem('user', JSON.stringify(auth.user));
@@ -88,7 +106,6 @@ export const AuthProvider = ({ children }) => {
         }
         return false
     };
-
     const requestAccess = async (values) => {
         const resp = await fetchWithToken('login/request-access', values, 'POST');
         if ( resp.success ) {
@@ -169,9 +186,10 @@ export const AuthProvider = ({ children }) => {
             auth,
             login,
             register,
+            createUserAdmin,
+            accessKey,
             requestAccess,
             verifyToken,
-            accessKey,
             logout,
         }}>
             {children}

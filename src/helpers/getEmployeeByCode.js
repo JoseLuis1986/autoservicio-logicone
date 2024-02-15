@@ -1,15 +1,16 @@
 import { employeesUsers } from "./dataHelper";
+import { fetchWithToken } from "./fetch";
 
-export const getEmployeeByCode = ({code}) => {
+export const getEmployeeByCode = async ({ code }) => {
     console.log(code);
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const employee = employeesUsers.data.find(({ PersonnelNumber }) => PersonnelNumber === code);
-            if(employee){
-               return resolve({name: employee.Name});
-            }else{
-                return reject("Server error");
-            }
-        }, 2000)
-    })
+    const url = 'employee';
+    const params = new URLSearchParams({ PersonnelNumber: code })
+    const urlEndpoint = url + '?' + params
+    const resp = await fetchWithToken(urlEndpoint);
+    console.log(resp);
+    if (resp.success) {
+        return { ok: true, data: resp.data };
+    } else {
+        return { ok: false, data: resp.data };
+    }
 }
