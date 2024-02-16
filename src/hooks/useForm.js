@@ -27,7 +27,6 @@ export const useForm = (initialState = {}) => {
     }
 
     const handleInputChange = ({ target }) => {
-
         setValues({
             ...values,
             [target.name]: target.value
@@ -41,5 +40,5 @@ export const useForm = (initialState = {}) => {
         })
     }
 
-    return [values, handleInputChange, handleInputImage, toggleCheck, reset];
+    return [values, setValues, handleInputChange, handleInputImage, toggleCheck, reset];
 }

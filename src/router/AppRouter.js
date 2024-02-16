@@ -5,6 +5,8 @@ import { AuthRouter } from './AuthRouter';
 import { DashBoardRoutes } from './DashBoardRoutes';
 import { PrivateRoute } from './PrivateRoute';
 import { PublicRoute } from './PublicRoute';
+import { ConfigurationRoutes } from './ConfigurationRoutes';
+import { ProtectedRoute } from './ProtectedRoute';
 
 
 export const AppRouter = () => {
@@ -34,6 +36,12 @@ export const AppRouter = () => {
                     <PrivateRoute>
                         <DashBoardRoutes />
                     </PrivateRoute>
+                }
+                />
+                <Route path="/config/*" element={
+                    <ProtectedRoute>
+                        <ConfigurationRoutes />
+                    </ProtectedRoute>
                 }
                 />
             </Routes>

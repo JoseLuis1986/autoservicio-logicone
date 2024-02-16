@@ -50,7 +50,7 @@ export const fetchRegister = async (endpoint, data, method) => {
 
 export const fetchWithToken = async (endpoint, data = {}, method = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
-    const token = JSON.parse(localStorage.getItem('token')) || undefined;
+    const token = JSON.parse(localStorage.getItem('token')) || null;
     // const { access_token } = token;
     // const timeExpire = await getTimeExpire(not_before);
 
@@ -58,7 +58,7 @@ export const fetchWithToken = async (endpoint, data = {}, method = 'GET') => {
         try {
             const resp = await fetch(url, {
                 headers: {
-                    'authorization': token
+                    'Authorization': token
                 }
             });
             const result = await resp.json();
@@ -87,20 +87,3 @@ export const fetchWithToken = async (endpoint, data = {}, method = 'GET') => {
         }
     }
 }
-
-// export const fetchExternalWithToken = async ( endpoint, data, method = 'GET') => {
-//     const url = `${baseUrl}/${endpoint}`;
-//     const config = await fetchWithoutToken('login');
-//     if (config.success) {
-//         localStorage.setItem('token', JSON.stringify(config.token.access_token))
-//     } else {
-//         setLoading(false)
-//         dispatch({
-//             type: types.newIntent,
-//             payload: {
-//                 intent: 'error',
-//                 messages: config.result
-//             }
-//         })
-//     }
-// }

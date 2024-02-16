@@ -11,26 +11,22 @@ import { types } from '../../types/types';
 import { renewToken } from '../../helpers/renewToken';
 import { hasUserAdmin } from '../../helpers/hasUserAdmin';
 
-const initialForm = {
-    Personnelnumber: '000046',
-    Identification: '02800950459',
-    Nombre: 'Wayne Samuel',
-    // rememberme: false
-};
+// const initialForm = {
+//     Personnelnumber: '000046',
+// }
 
 export const LoginPage = () => {
     const logo = JSON.parse(localStorage.getItem('logo'));
 
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [codeEmpl, setCodeEmpl] = useState({Personnelnumber: ''})
 
     const { login } = useContext(AuthContext);
     const { dispatch } = useContext(AlertContext);
 
     const styles = useStyles();
     const navigate = useNavigate();
-
-    const [form, handleInputChange] = useForm(initialForm);
 
     useEffect(() => {
         Promise.all([renewToken().catch((error) => console.log(error)), hasUserAdmin().catch((error) => console.log(error))]).then(
@@ -48,23 +44,23 @@ export const LoginPage = () => {
                 if (values[0].success && !values[1].data.length) {
                     return navigate('/');
                 }
-                
+
             })
     }, [dispatch, navigate])
+
+
+    const handleInputChange = ({ target }) => {
+        setCodeEmpl({
+            [target.name]: target.value
+        })
+    }
 
 
     const onSubmit = async (ev) => {
         ev.preventDefault();
         setLoading(true)
-
-        const { Personnelnumber, Identification, Nombre } = form;
-        const data = {
-            Personnelnumber,
-            Identification,
-            Nombre
-        }
         // TODO: llamar el backend
-        const result = await login(data);
+        const result = await login(codeEmpl);
         if (result) {
             setLoading(false);
             setShowModal(true);
@@ -72,9 +68,9 @@ export const LoginPage = () => {
         setLoading(false)
     }
 
-    const todoOk = () => {
-        return (form.Personnelnumber.length > 0 && form.Identification.length > 0 && form.Nombre.length > 0) ? true : false;
-    }
+    // const todoOk = () => {
+    //     return (form.Personnelnumber.length > 0 && form.Identification.length > 0 && form.Nombre.length > 0) ? true : false;
+    // }
 
     const handleReg = (ev) => {
         ev.preventDefault();
@@ -103,7 +99,7 @@ export const LoginPage = () => {
                         <form noValidate autoComplete="off" onSubmit={onSubmit}>
                             <div className={styles.field}>
                                 <Label required>Codigo de empleado</Label>
-                                <Input appearance="underline" name="Personnelnumber" value={form.Personnelnumber} onChange={handleInputChange} />
+                                <Input appearance="underline" name="Personnelnumber" value={codeEmpl.Personnelnumber} onChange={handleInputChange} />
                             </div>
                             {/* 
                             <div className={styles.field}>
@@ -119,7 +115,8 @@ export const LoginPage = () => {
                                 <Checkbox label="Recordar mi cuenta" name="rememberme" checked={form.rememberme} onChange={toggleCheck} />
                             </div> */}
                             <div className={styles.wrapper}>
-                                <Button style={{ width: '100%' }} type='submit' appearance="primary" shape='square' disabled={!todoOk()} >
+                                {/* //disabled={!todoOk()} */}
+                                <Button style={{ width: '100%' }} type='submit' appearance="primary" shape='square' >
                                     Siguiente
                                 </Button>
                             </div>

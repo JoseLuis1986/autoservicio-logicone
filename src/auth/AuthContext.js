@@ -29,9 +29,11 @@ export const AuthProvider = ({ children }) => {
     access_token: 
     */
 
-   const register = async (data) => {
+    const register = async (data) => {
+        data.forEach(element => {
+           console.log(element) 
+        });
         const resp = await fetchRegister('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
-        console.log(resp);
         if (resp.success) {
             const { access_token } = resp.token;
             //guardo el token
@@ -49,6 +51,30 @@ export const AuthProvider = ({ children }) => {
         });
         return { ok: false, message: resp.error }
     };
+
+    const updateRegister = async (data) => {
+        const resp = await fetchRegister('config-update', data, 'PUT'); //{ tenant_id, client_id, client_secret, grant_type, resource }
+        console.log(resp);
+        if (resp.success) {
+            dispatch({
+                type: types.newIntent,
+                payload: {
+                    intent: 'success',
+                    messages: resp.msg
+                }
+            });    
+
+            return { ok: true };
+        }
+        dispatch({
+            type: types.newIntent,
+            payload: {
+                intent: 'error',
+                messages: resp.error
+            }
+        });
+        return { ok: false, message: resp.error }
+    }
 
     const login = async (values) => {
         // renewToken();
@@ -81,7 +107,7 @@ export const AuthProvider = ({ children }) => {
         const resp = await fetchWithoutToken('login/new-useradmin', values, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
         console.log(resp);
         if (resp.success) {
-            console.log("Configuracion exitosa!!");
+            console.log("Configuración exitosa!!");
             return { ok: true };
         }
         dispatch({
@@ -108,10 +134,10 @@ export const AuthProvider = ({ children }) => {
     };
     const requestAccess = async (values) => {
         const resp = await fetchWithToken('login/request-access', values, 'POST');
-        if ( resp.success ) {
+        if (resp.success) {
             return { ok: true, message: resp.message }
         } else {
-           return { ok: false, message: resp.message }
+            return { ok: false, message: resp.message }
         }
     }
 
@@ -176,7 +202,7 @@ export const AuthProvider = ({ children }) => {
             clave_access: null
         });
 
-        dispatch({ type: types.cleanMessage })
+        dispatch({ type: types.cleanMessage });
     }
 
 
@@ -186,6 +212,7 @@ export const AuthProvider = ({ children }) => {
             auth,
             login,
             register,
+            updateRegister,
             createUserAdmin,
             accessKey,
             requestAccess,

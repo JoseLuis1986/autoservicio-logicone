@@ -7,6 +7,9 @@ import { AuthContext } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom'
 
 import '../../css/nav-bar.css'
+import { hasUserAdmin } from '../../helpers/hasUserAdmin';
+import { types } from '../../types/types';
+import { ConfigurationContext } from '../../context/configuration/ConfigurationContext';
 
 const navLinkGroups = [
     {
@@ -157,18 +160,30 @@ const stackTokens = {
 
 
 export const Navbar = ({ children }) => {
-
     const { logout, auth } = useContext(AuthContext);
+    const { dispatchConfig } = useContext(ConfigurationContext);
     const [isOpen, setIsOpen] = useState(false);
     const [employee, setEmployee] = useState([]);
+    const [showConfig, setShowConfig] = useState(false);
     const styles = useStyles();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (auth.user) {
-            const emp = auth.user;
-            setEmployee(emp)
-        }
+        hasUserAdmin()
+            .then((resp) => {
+                if (auth.user) {
+                    const emp = auth.user;
+                    setEmployee(emp)
+                    if (resp?.data[0].codigo === emp.PersonnelNumber) {
+                        dispatchConfig({
+                            type: types.hasUserAdmin,
+                            payload: true
+                        })
+                        setShowConfig(true);
+                    }
+                }
+            })
+            .catch((err) => console.log(err))
     }, [])
 
 
@@ -178,6 +193,11 @@ export const Navbar = ({ children }) => {
             return
         }
         navigate(`${element.url}`)
+    }
+
+    const handleLogout = () => {
+        dispatchConfig({ type: types.hasUserAdmin, payload: false });
+        logout();
     }
 
     return (
@@ -192,8 +212,19 @@ export const Navbar = ({ children }) => {
                     <Stack.Item grow={12} styles={stackItemStylesUser}>
                         <h3 style={{ fontWeight: 'bold' }}>{employee.Name}</h3>
                     </Stack.Item>
+                    {
+                        showConfig
+                        &&
+                        (
+                            <Stack.Item grow styles={stackItemStyles}>
+                                <Button appearance='transparent' onClick={() => navigate("/config")}>
+                                    <h4 style={{ color: "white" }}>Configuración</h4>
+                                </Button>
+                            </Stack.Item>
+                        )
+                    }
                     <Stack.Item grow styles={stackItemStyles}>
-                        <Button appearance='transparent' onClick={logout}>
+                        <Button appearance='transparent' onClick={handleLogout}>
                             <h4 style={{ color: "white" }}>Salir</h4>
                         </Button>
                     </Stack.Item>

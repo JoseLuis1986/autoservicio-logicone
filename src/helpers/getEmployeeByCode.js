@@ -7,7 +7,6 @@ export const getEmployeeByCode = async ({ code }) => {
     const params = new URLSearchParams({ PersonnelNumber: code })
     const urlEndpoint = url + '?' + params
     const resp = await fetchWithToken(urlEndpoint);
-    console.log(resp);
     if (resp.success) {
         return { ok: true, data: resp.data };
     } else {

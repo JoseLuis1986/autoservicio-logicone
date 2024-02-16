@@ -9,7 +9,7 @@ import { RegisterPage } from '../pages/authentication/RegisterPage';
 
 
 export const AuthRouter = () => {
-    const imagenBase64 = JSON.parse(localStorage.getItem('imageBg'))
+    const imagenBase64 = JSON.parse(localStorage.getItem('imageBg'));
     return (
         <div style={{
             width: '100%', // Puedes ajustar el ancho según tus necesidades
