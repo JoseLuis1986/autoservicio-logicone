@@ -21,7 +21,6 @@ export const getConfiguration = async () => {
     try {
       const response = await fetch(url);
       const { success, data } = await response.json();
-      console.log(data);
       if (success) {
         return { success, data }
       } else {

@@ -24,7 +24,6 @@ export const useFetch = (url) => {
 
         fetchWithToken(url, { signal })
             .then((resp) => {
-                console.log(resp)
                 // if (isMounted.current) {
                 if (resp.status === 401) {
                     dispatch({

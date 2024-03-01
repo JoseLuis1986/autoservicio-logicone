@@ -55,7 +55,6 @@ export const RegisterPage = () => {
         }
         // TODO: llamar el backend
         const result = await requestAccess(data);
-        console.log(result)
         if (result.ok) {
             setLoading(false);
             reset();

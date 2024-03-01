@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { DefaultPalette, Stack, Slider } from '@fluentui/react';
-import { GridDots24Filled, Dismiss24Regular, LineHorizontal320Regular } from '@fluentui/react-icons';
-import { Button, Drawer, DrawerBody, DrawerHeader, DrawerHeaderTitle, tokens, makeStyles, shorthands } from '@fluentui/react-components';
+import { DefaultPalette, Stack } from '@fluentui/react';
+import { GridDots24Filled, Dismiss24Regular, LineHorizontal320Regular, Settings24Regular } from '@fluentui/react-icons';
+import { Button, Drawer, DrawerBody, DrawerHeader, DrawerHeaderTitle, tokens, makeStyles, shorthands, Popover, PopoverTrigger, PopoverSurface } from '@fluentui/react-components';
+import { Avatar } from "@fluentui/react-components";
 import { Nav } from '@fluentui/react/lib/Nav';
 import { AuthContext } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom'
@@ -91,7 +92,6 @@ const useStyles = makeStyles({
     drawer: {
         transitionDuration: "0ms",
     },
-
     navbody: {
         ...shorthands.padding("0px")
     },
@@ -110,7 +110,14 @@ const useStyles = makeStyles({
     field: {
         display: "grid",
         gridRowGap: tokens.spacingVerticalS,
-    }
+    },
+    popoverSurface: {
+        width: "150px",
+        height: "50px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    },
 });
 // Styles definition
 const stackStyles = {
@@ -159,12 +166,24 @@ const stackTokens = {
 };
 
 
+const validateUserAdmin = (empleadoAct, admins) => {
+
+    for (let i = 0; i < admins.length; i++) {
+        const element = admins[i];
+        if( element.codigo === empleadoAct){
+            return true;
+        }
+    }
+    
+}
+
 export const Navbar = ({ children }) => {
     const { logout, auth } = useContext(AuthContext);
     const { dispatchConfig } = useContext(ConfigurationContext);
     const [isOpen, setIsOpen] = useState(false);
     const [employee, setEmployee] = useState([]);
     const [showConfig, setShowConfig] = useState(false);
+    const [showPopover, setShowPopover] = useState(false);
     const styles = useStyles();
     const navigate = useNavigate();
 
@@ -173,8 +192,9 @@ export const Navbar = ({ children }) => {
             .then((resp) => {
                 if (auth.user) {
                     const emp = auth.user;
-                    setEmployee(emp)
-                    if (resp?.data[0].codigo === emp.PersonnelNumber) {
+                    setEmployee(emp);
+                    const validate = validateUserAdmin(emp.PersonnelNumber, resp.data)
+                    if (validate) {
                         dispatchConfig({
                             type: types.hasUserAdmin,
                             payload: true
@@ -204,29 +224,48 @@ export const Navbar = ({ children }) => {
         <div className="parent">
             <div className="child">
                 <Stack enableScopedSelectors horizontal styles={stackStyles} tokens={stackTokens}>
-                    <Stack.Item grow={12} styles={stackItemStylesStart}>
+                    <Stack.Item grow={30} styles={stackItemStylesStart}>
                         <Button appearance="transparent" icon={<GridDots24Filled style={{ color: "white", height: 55 }} />}>
                         </Button>
                         <h3 style={{ fontWeight: 'bold', paddingLeft: '25px' }}>Finances and Operations</h3>
                     </Stack.Item>
-                    <Stack.Item grow={12} styles={stackItemStylesUser}>
+                    {/* <Stack.Item grow={12} styles={stackItemStylesUser}>
                         <h3 style={{ fontWeight: 'bold' }}>{employee.Name}</h3>
-                    </Stack.Item>
+                    </Stack.Item> */}
                     {
                         showConfig
                         &&
                         (
                             <Stack.Item grow styles={stackItemStyles}>
-                                <Button appearance='transparent' onClick={() => navigate("/config")}>
-                                    <h4 style={{ color: "white" }}>Configuración</h4>
+                                <Button appearance="transparent" icon={<Settings24Regular style={{ color: "white", height: 55 }} onClick={() => navigate("/config")} />}>
                                 </Button>
                             </Stack.Item>
                         )
                     }
                     <Stack.Item grow styles={stackItemStyles}>
-                        <Button appearance='transparent' onClick={handleLogout}>
-                            <h4 style={{ color: "white" }}>Salir</h4>
-                        </Button>
+                        <Popover positioning={'below'} open={showPopover}>
+                            <PopoverTrigger disableButtonEnhancement>
+                                <Button
+                                    appearance="transparent"
+                                    onClick={() => setShowPopover(showPopover ? false : true)}
+                                >
+                                    <Avatar active="active" name={employee.Name} />
+                                </Button>
+                            </PopoverTrigger>
+
+                            <PopoverSurface className={styles.popoverSurface}>
+                                <div>
+                                    <p>
+                                        {employee.Name}
+                                    </p>
+                                    <div>
+                                        <Button appearance='transparent' type='primary' onClick={handleLogout}>
+                                            Cerrar sesion
+                                        </Button>
+                                    </div>
+                                </div>
+                            </PopoverSurface>
+                        </Popover>
                     </Stack.Item>
                 </Stack>
             </div>
@@ -270,7 +309,7 @@ export const Navbar = ({ children }) => {
                         }
                     </div>
                 </div>
-                <div className="content" style={{ background: "#fafafafa" }}>{children}</div>
+                <div className="content" style={{ background: "#fafafa" }}>{children}</div>
             </div>
             <div className="footer" style={{ background: DefaultPalette.blueDark }}>
                 <small>

@@ -85,7 +85,7 @@ export const CustomModal = ({ isModalOpen }) => {
                                 style={{
                                     display: 'flex',
                                     marginTop: '10px',
-                                    background: "#fafafa",
+                                    backgroundColor: "#fafafa",
                                     justifyContent: "center",
                                     fontSize: "24"
                                 }}>

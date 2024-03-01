@@ -58,18 +58,14 @@ export const SalaryReceipt = () => {
   const { dispatch } = useContext(AlertContext);
   const { PersonnelNumber, Name } = auth.user;
 
-  console.log('salary receipt');
   const navigate = useNavigate();
   const styles = useStyles();
 
   const handleDateSelect = async (values) => {
     setLoading(true);
-    console.log(values);
     const { start_date, end_date } = values;
     const startDate = start_date;
     const endDate = end_date;
-    console.log(startDate);
-    console.log(endDate);
     const params = new URLSearchParams({
       Name,
       PersonnelNumber,
@@ -78,7 +74,6 @@ export const SalaryReceipt = () => {
     })
     const url = 'payments';
     const resp = await fetchWithToken(url + '?' + params);
-    console.log(resp);
     if (resp.status === 401) {
       dispatch({
         type: types.newIntent,

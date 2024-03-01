@@ -204,7 +204,7 @@ export const MyDocument = ({ source, deductions }) => {
                             </View>
                             <View style={styles.content3}>
                                 <Text style={styles.subcontent1}>
-                                    {source.GrossPay}
+                                    {MontoFormateado(source.GrossPay)}
                                 </Text>
                             </View>
                             <View style={styles.content3}>

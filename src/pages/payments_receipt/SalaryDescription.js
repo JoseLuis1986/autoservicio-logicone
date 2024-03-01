@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { Image, Pivot, PivotItem, Stack } from '@fluentui/react';
+import { Pivot, PivotItem, Stack } from '@fluentui/react';
 import {
     Button,
     Input,
 } from "@fluentui/react-components";
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Earnings } from './Earnings';
 import { Deductions } from './Deductions';
 import { Accumulations } from './Accumulations'
@@ -24,6 +24,7 @@ export const SalaryDescription = () => {
     const [viewPdf, setViewPdf] = useState(false);
     const { auth } = useContext(AuthContext);
     const location = useLocation();
+    const navigate = useNavigate();
     const {
         BatchNumber,
         DisbursementFormat,
@@ -49,14 +50,21 @@ export const SalaryDescription = () => {
         ...location.state
     }
 
+    console.log(dataForDoc);
+
     return (
         <>
             <div style={{ textAlign: "end" }}>
                 <Button onClick={() => handlePdf()}>Imprimir volante de pago</Button>
             </div>
-            <div>
-                <Button onClick={() => setViewPdf(false)}>Volver</Button>
-            </div>
+            {
+                viewPdf ?
+                    (
+                        <Button onClick={() => setViewPdf(false)}>Cerrar pdf</Button>
+                    ) : (
+                        <Button onClick={() => navigate('/salary-receipt')}>Volver</Button>
+                    )
+            }
             {
                 viewPdf
                     ?

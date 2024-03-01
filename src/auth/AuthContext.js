@@ -2,6 +2,7 @@ import { useState, useCallback, useContext, createContext } from "react";
 import { fetchRegister, fetchWithToken, fetchWithoutToken } from "../helpers/fetch";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
+import { ConfigurationContext } from "../context/configuration/ConfigurationContext";
 
 export const AuthContext = createContext();
 
@@ -11,13 +12,15 @@ const initialState = {
     checking: true,
     logged: false,
     user: {},
-    clave_access: null
+    clave_access: null,
+    background: ''
 };
 
 export const AuthProvider = ({ children }) => {
 
     const [auth, setAuth] = useState(initialState);
     const { dispatch } = useContext(AlertContext);
+    const { dispatchConfig } = useContext(ConfigurationContext);
 
     /*
     token_type: 'Bearer',                                                                                                   
@@ -30,9 +33,6 @@ export const AuthProvider = ({ children }) => {
     */
 
     const register = async (data) => {
-        data.forEach(element => {
-           console.log(element) 
-        });
         const resp = await fetchRegister('login/new', data, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
         if (resp.success) {
             const { access_token } = resp.token;
@@ -54,7 +54,6 @@ export const AuthProvider = ({ children }) => {
 
     const updateRegister = async (data) => {
         const resp = await fetchRegister('config-update', data, 'PUT'); //{ tenant_id, client_id, client_secret, grant_type, resource }
-        console.log(resp);
         if (resp.success) {
             dispatch({
                 type: types.newIntent,
@@ -103,9 +102,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const createUserAdmin = async (values) => {
-        console.log(values);
         const resp = await fetchWithoutToken('login/new-useradmin', values, 'POST'); //{ tenant_id, client_id, client_secret, grant_type, resource }
-        console.log(resp);
         if (resp.success) {
             console.log("Configuración exitosa!!");
             return { ok: true };
@@ -149,23 +146,24 @@ export const AuthProvider = ({ children }) => {
                 checking: false,
                 logged: false,
                 user: {},
-                clave_access: null
+                clave_access: null,
+                background: ''
             })
 
             return false;
         }
         // const { access_token } = token;
         //si token no existe
-        if (!token) {
-            setAuth({
-                checking: false,
-                logged: false,
-                user: {},
-                clave_access: null
-            })
+        // if (!token) {
+        //     setAuth({
+        //         checking: false,
+        //         logged: false,
+        //         user: {},
+        //         clave_access: null
+        //     })
 
-            return false;
-        }
+        //     return false;
+        // }
         // const resp = await fetchWithToken('login');
         const resp = JSON.parse(localStorage.getItem('user'))
         if (!resp) {
@@ -173,7 +171,8 @@ export const AuthProvider = ({ children }) => {
                 checking: false,
                 logged: false,
                 user: {},
-                clave_access: null
+                clave_access: null,
+                background: ''
             })
             console.log("No Autenticado!!");
             return false;
@@ -203,9 +202,13 @@ export const AuthProvider = ({ children }) => {
         });
 
         dispatch({ type: types.cleanMessage });
+        dispatchConfig({ type: types.hasUserAdmin, payload: false })
+        
     }
-
-
+    
+    const setBackground = (bg) => {
+        setAuth({...auth, background: bg})
+    }
 
     return (
         <AuthContext.Provider value={{
@@ -217,6 +220,7 @@ export const AuthProvider = ({ children }) => {
             accessKey,
             requestAccess,
             verifyToken,
+            setBackground,
             logout,
         }}>
             {children}

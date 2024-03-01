@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
 import { Button, makeStyles, shorthands } from "@fluentui/react-components";
-import { DatePicker, classNamesFunction, defaultDatePickerStrings } from "@fluentui/react";
+import { DatePicker, defaultDatePickerStrings } from "@fluentui/react";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
 import dayjs from "dayjs";
@@ -53,6 +53,7 @@ export const DateRange = ({ handleDateSelect }) => {
   const { dispatch } = useContext(AlertContext);
   const datePickerRef = useRef(null);
   const datePickerRef1 = useRef(null);
+  const d1 = dayjs(new Date());
 
   const onParseDateFromString = useCallback((newValue) => {
     const previousValue = value || new Date();
@@ -76,8 +77,7 @@ export const DateRange = ({ handleDateSelect }) => {
     const { start_date, end_date } = datestr;
     const d1 = start_date === null;
     const d2 = end_date === null;
-    console.log(start_date);
-    console.log(end_date);
+
     if (d1 || d2) {
       // setDatestr({ start_date: "", end_date: "" });
       dispatch({
@@ -107,11 +107,10 @@ export const DateRange = ({ handleDateSelect }) => {
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
           value={datestr.start_date}
-          onSelectDate={(date) => setDatestr({ ...datestr, start_date: date })}
+          onSelectDate={(date) => (dayjs(date).isAfter(d1)) ? setDatestr({ ...datestr, start_date: d1.toDate() }) : setDatestr({ ...datestr, start_date: date }) }
           formatDate={onFormatDate}
           parseDateFromString={onParseDateFromString}
           className={styles.control1}
-          // DatePicker uses English strings by default. For localized apps, you must override this prop.
           strings={defaultDatePickerStrings}
           placeholder="Select a date..."
         />
@@ -124,7 +123,7 @@ export const DateRange = ({ handleDateSelect }) => {
           allowTextInput
           ariaLabel="Select a date. Input format is day slash month slash year."
           value={datestr.end_date}
-          onSelectDate={(date) => setDatestr({ ...datestr, end_date: date })}
+          onSelectDate={(date) => (dayjs(date).isBefore(datestr.start_date)) ? setDatestr({ ...datestr, end_date: d1.toDate()}) : setDatestr({...datestr, end_date: date}) }
           formatDate={onFormatDate}
           parseDateFromString={onParseDateFromString}
           className={styles.control1}

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Card, Input, Label, Image, Button, Link } from "@fluentui/react-components";
 import { useStyles } from '../useStyles';
 import { AuthContext } from '../../auth/AuthContext';
-import { useForm } from '../../hooks/useForm';
 import { useNavigate } from 'react-router-dom';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { CustomModal } from '../../components/CustomModal';
@@ -68,9 +67,6 @@ export const LoginPage = () => {
         setLoading(false)
     }
 
-    // const todoOk = () => {
-    //     return (form.Personnelnumber.length > 0 && form.Identification.length > 0 && form.Nombre.length > 0) ? true : false;
-    // }
 
     const handleReg = (ev) => {
         ev.preventDefault();
@@ -101,21 +97,8 @@ export const LoginPage = () => {
                                 <Label required>Codigo de empleado</Label>
                                 <Input appearance="underline" name="Personnelnumber" value={codeEmpl.Personnelnumber} onChange={handleInputChange} />
                             </div>
-                            {/* 
-                            <div className={styles.field}>
-                                <Label required>identificación</Label>
-                                <Input appearance="underline" name="Identification" value={form.Identification} onChange={handleInputChange} />
-                            </div>
-
-                            <div className={styles.field}>
-                                <Label required>Nombre</Label>
-                                <Input appearance="underline" name="Nombre" value={form.Nombre} onChange={handleInputChange} />
-                            </div> */}
-                            {/* <div>
-                                <Checkbox label="Recordar mi cuenta" name="rememberme" checked={form.rememberme} onChange={toggleCheck} />
-                            </div> */}
+                    
                             <div className={styles.wrapper}>
-                                {/* //disabled={!todoOk()} */}
                                 <Button style={{ width: '100%' }} type='submit' appearance="primary" shape='square' >
                                     Siguiente
                                 </Button>

@@ -2,7 +2,6 @@ import { employeesUsers } from "./dataHelper";
 import { fetchWithToken } from "./fetch";
 
 export const getEmployeeByCode = async ({ code }) => {
-    console.log(code);
     const url = 'employee';
     const params = new URLSearchParams({ PersonnelNumber: code })
     const urlEndpoint = url + '?' + params

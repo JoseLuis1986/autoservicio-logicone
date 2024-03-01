@@ -15,7 +15,7 @@ export const ConfigInitialPage = () => {
     const [loading, setLoading] = useState(true);
     const [imageSplash, setImageSplash] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const { register } = useContext(AuthContext);
+    const { register, setBackground } = useContext(AuthContext);
     const { dispatch } = useContext(AlertContext);
     const navigate = useNavigate();
     const styles = useStyles();
@@ -25,9 +25,6 @@ export const ConfigInitialPage = () => {
     });
     const inputRef = useRef();
     const inputRef1 =  useRef();
-
-    console.log(file);
-
 
     useEffect(() => {
         Promise.all([renewToken().catch((error) => error), hasUserAdmin().catch((error) => error)]).then(
@@ -43,12 +40,13 @@ export const ConfigInitialPage = () => {
                     })
                 }
                 if (values[0].success && !values[1].data.length) {
-                    console.log(values[0].data.imageLogo)
+                    setBackground(values[0].data.backgroundImage);
                     setImageSplash(values[0].data.imageLogo);
                     setLoading(false);
                     setShowModal(true);
                     return;
                 }
+                setBackground(values[0].data.backgroundImage)
                 setImageSplash(values[0].data.imageLogo);
                 return setTimeout(() => {
                     navigate('/auth/login')
@@ -71,11 +69,9 @@ export const ConfigInitialPage = () => {
     const onSubmit = async (ev) => {
         ev.preventDefault();
         setLoading(true);
-        console.log('mi formulario', form);
         const { resource, grant_type, tenant_id, client_id, client_secret } = form;
         const { logo, background } = file;
 
-        console.log(logo);
         const formDataToSend = new FormData();
         formDataToSend.append("resource", resource);
         formDataToSend.append("grant_type", grant_type);
@@ -160,7 +156,7 @@ export const ConfigInitialPage = () => {
                                         ref={inputRef1}
                                         appearance="underline" 
                                         name="background" 
-                                        type='file' 
+                                        type='file'
                                         onChange={() => setFiles({...file, background: inputRef1.current.files[0]})} 
                                     />
                                 </div>

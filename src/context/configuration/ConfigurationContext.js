@@ -13,7 +13,6 @@ export const ConfigProvider = ({ children }) => {
 
     const [configState, dispatchConfig] = useReducer( configReducer, initialState );
     
-    console.log(configState);
     return(
         <ConfigurationContext.Provider value={{
             configState,

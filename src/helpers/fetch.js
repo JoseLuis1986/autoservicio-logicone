@@ -68,7 +68,8 @@ export const fetchWithToken = async (endpoint, data = {}, method = 'GET') => {
                 error: err.message
             }
         }
-    } else {
+    } 
+    else {
         try {
             const resp = await fetch(url, {
                 method,

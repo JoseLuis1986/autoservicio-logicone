@@ -70,7 +70,6 @@ export default function GeneralRequest() {
             Priority: Number.parseInt(priority.substring(0, 1))
         }
         const resp = await fetchWithToken(endpoint, dataToSend, 'POST')
-        console.log(resp)
         if (resp.success) {
             setLoading(false);
             reset()

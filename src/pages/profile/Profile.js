@@ -5,7 +5,7 @@ import { ActionsNav } from '../../components/ui/ActionsNav';
 
 const useStyles = makeStyles({
   root: {
-    background: "#fafafafa"
+    backgroundColor: "#fafafa"
   }
 })
 

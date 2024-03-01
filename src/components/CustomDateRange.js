@@ -49,6 +49,7 @@ export const CustomDateRange = ({ handleInputChange, state }) => {
   const [valueDate, setValueDate] = useState(initialStateDate);
   const datePickerRef = useRef(null);
   const datePickerRef1 = useRef(null);
+  const d1 = dayjs(new Date());
 
   const onParseDateFromString = useCallback((newValue) => {
     const previousValue = valueDate || new Date();
@@ -69,6 +70,7 @@ export const CustomDateRange = ({ handleInputChange, state }) => {
   );
 
   const onChangeDate = (val) => {
+    console.log(val);
     const name = Object.keys(val);
     const value = Object.values(val);
     handleInputChange({
@@ -84,7 +86,7 @@ export const CustomDateRange = ({ handleInputChange, state }) => {
         allowTextInput
         ariaLabel="Selecciona una fecha de inicio."
         value={state.start_date}
-        onSelectDate={(date) => onChangeDate({ start_date: date })}
+        onSelectDate={(date) => onChangeDate({ start_date: (dayjs(date).isAfter(d1)) ? d1.toDate() :  date })}
         formatDate={onFormatDate}
         parseDateFromString={onParseDateFromString}
         className={styles.control1}
@@ -96,7 +98,7 @@ export const CustomDateRange = ({ handleInputChange, state }) => {
         allowTextInput
         ariaLabel="Selecciona una fecha final."
         value={state.end_date}
-        onSelectDate={(date) => onChangeDate({ end_date: date })}
+        onSelectDate={(date) => onChangeDate({ end_date: (dayjs(date).isBefore(state.start_date)) ? state.start_date : date })}
         formatDate={onFormatDate}
         parseDateFromString={onParseDateFromString}
         className={styles.control1}

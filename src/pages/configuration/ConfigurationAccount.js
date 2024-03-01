@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Card, Input, Label, Button } from "@fluentui/react-components";
+import { Card, Input, Label, Button, Persona } from "@fluentui/react-components";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/AuthContext';
 import { AlertContext } from '../../context/alerts/AlertContext';
@@ -7,6 +7,7 @@ import { useStylesConfig } from '../useStylesConfig';
 import { types } from '../../types/types';
 import { MessagesInfo } from '../../components/messages/MessagesInfo';
 import { AdminModal } from '../../components/AdminModal';
+import { fetchWithoutToken } from '../../helpers/fetch';
 
 
 const getConfiguration = async () => {
@@ -31,7 +32,6 @@ const getUserAdmin = async () => {
   try {
     const response = await fetch(url);
     const { success, data } = await response.json();
-    console.log(data);
     if (success) {
       return { success, data }
     } else {
@@ -55,15 +55,13 @@ export const ConfigurationAccount = () => {
   });
   const [userAdmin, setUserAdmin] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
   const styles = useStylesConfig();
   const inputRef = useRef();
   const inputRef1 = useRef();
 
-  useEffect(() => {
+  const getAllDataConfig = () => {
     Promise.all([getConfiguration().catch((error) => console.log(error)), getUserAdmin().catch((error) => console.log(error))]).then(
       (values) => {
-        console.log(values);
         if (!values[0].success) {
           dispatch({
             type: types.newIntent,
@@ -76,17 +74,20 @@ export const ConfigurationAccount = () => {
         }
         setValues(values[0].data);
         const { data } = values[1];
-        setUserAdmin(data[0]);
+        setUserAdmin(data);
 
         setLoading(false);
 
       })
-  }, [dispatch])
+  }
+
+  useEffect(() => {
+    getAllDataConfig();
+  }, []);
 
 
   const onSubmit = async (ev) => {
     ev.preventDefault();
-    console.log(values);
     const { _id, resource, grant_type, tenant_id, client_id, client_secret } = values;
     const { logo, background } = files;
     const formDataToSend = new FormData();
@@ -106,6 +107,10 @@ export const ConfigurationAccount = () => {
     }
   }
 
+  const onSubmitUser = async (ev) => {
+    ev.preventDefault();
+  }
+
   const todoOk = () => {
     return (values.resource.length > 0 &&
       values.tenant_id.length > 0 &&
@@ -121,21 +126,31 @@ export const ConfigurationAccount = () => {
     })
   }
 
-  const handleInputImage = ({ target }) => {
-    setValues({
-      ...values,
-      [target.name]: target.files[0]
-    })
-  }
 
   const handleNewUser = () => {
     setShowModal(true);
   }
 
+  const handleDeleteUser = async (values) => {
+    const {_id} = values;
+    const url = 'login/user-admin'+ "/" +`${_id}`;
+    const resp = await fetchWithoutToken(url, {}, 'DELETE');
+    if(resp.success) {
+      getAllDataConfig();
+      dispatch({
+        type: types.newIntent,
+        payload: {
+          intent: 'success',
+          messages: 'El usario administrativo fue eliminado'
+        }
+      })
+    }
+  }
+
   return (
     <>
       <MessagesInfo />
-      {/* <AdminModal isModalOpen={showModal}/> */}
+      <AdminModal isModalOpen={showModal} setShowModal={setShowModal} message={'Un nuevo usuario administrativo fue creado'} />
       {
         loading
           ? (<h1>Cargando datos de configuración</h1>)
@@ -176,11 +191,8 @@ export const ConfigurationAccount = () => {
                 </div>
                 {/* BUTTONS */}
                 <div className={styles.wrapper}>
-                  <Button appearance="secondary" shape='square' onClick={console.log('hello')}>
-                    Atras
-                  </Button>
                   <Button type='submit' appearance="primary" shape='square' disabled={!todoOk()} >
-                    Siguiente
+                    Actualizar
                   </Button>
                 </div>
               </form>
@@ -188,30 +200,27 @@ export const ConfigurationAccount = () => {
             {/* Configuracion del usuario admin */}
             <Card className={styles.boundary}>
               <h3 style={{ marginBottom: '2px', textAlign: 'center' }}>Usuario Admin</h3>
-              <form noValidate autoComplete="off" onSubmit={onSubmit}>
-                {/* RECURSO */}
-                <div className={styles.field}>
-                  <Label required style={{ fontWeight: 600 }}>Codigo personal</Label>
-                  <Input appearance="underline" name="resource" value={userAdmin.codigo} onChange={handleInputChange} disabled={true} />
-                </div>
-                {/* TENANT */}
-                <div className={styles.field}>
-                  <Label required style={{ fontWeight: 600 }}>Nombre</Label>
-                  <Input appearance="underline" name="tenant_id" value={userAdmin.name} onChange={handleInputChange} disabled={true} />
-                </div>
-                {/* CLIENT ID */}
-                <div className={styles.field}>
-                  <Label required style={{ fontWeight: 600 }}>Correo electronico</Label>
-                  <Input appearance="underline" name="client_id" value={userAdmin.email} onChange={handleInputChange} disabled={true} />
-                </div>
+              {
+                userAdmin.map((user) => (
+                  <Card key={user.codigo} style={{ backgroundColor: '#bac2da' }}>
+                    <Persona
+                      // textAlignment="large"
+                      size="huge"
+                      presence={{ status: "available" }}
+                      name={user.name}
+                      secondaryText={user.codigo}
+                      tertiaryText={user.email}
+                    />
+                    <Button onClick={() => handleDeleteUser(user)}>Eliminar</Button>
+                  </Card>
+                ))
+              }
 
-                {/* BUTTONS */}
-                <div className={styles.wrapper}>
-                  <Button type='submit' appearance="primary" shape='square' onClick={handleNewUser} >
-                    Crear nuevo usuario
-                  </Button>
-                </div>
-              </form>
+              <div className={styles.wrapper}>
+                <Button type='submit' style={{ height: "35px" }} appearance="primary" onClick={handleNewUser} >
+                  Crear nuevo usuario
+                </Button>
+              </div>
             </Card>
           </div>)
       }

@@ -7,11 +7,11 @@ import { ConfigProvider } from './context/configuration/ConfigurationContext';
 export const App = () => {
     return (
         <AlertProvider>
-            <AuthProvider>
-                <ConfigProvider>
+            <ConfigProvider>
+                <AuthProvider>
                     <AppRouter />
-                </ConfigProvider>
-            </AuthProvider>
+                </AuthProvider>
+            </ConfigProvider>
         </AlertProvider>
     )
 }

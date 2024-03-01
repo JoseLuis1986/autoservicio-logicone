@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -16,12 +16,13 @@ import {
   shorthands,
   tokens,
 } from "@fluentui/react-components";
-import { Checkmark24Filled } from "@fluentui/react-icons";
+import { Checkmark24Filled, Search24Regular } from "@fluentui/react-icons";
 import { AuthContext } from "../auth/AuthContext";
 import { getEmployeeByCode } from "../helpers/getEmployeeByCode";
 import { AlertContext } from "../context/alerts/AlertContext";
 import { types } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import { MessagesInfo } from "./messages/MessagesInfo";
 
 const useStyles = makeStyles({
   content: {
@@ -44,9 +45,10 @@ const initialState = {
   password2: "",
 };
 
-export const AdminModal = ({ isModalOpen }) => {
-  const { createUserAdmin } = useContext(AuthContext);
+export const AdminModal = ({ isModalOpen, setShowModal, closeModal = true, message }) => {
+  const { createUserAdmin, logout } = useContext(AuthContext);
   const { dispatch } = useContext(AlertContext);
+  // const [showModal, setShowModal] = useState(isModalOpen);
   const [values, setValues] = useState(initialState);
   const [checked, setChecked] = useState(false);
   const [loadingInput, setLoadingInput] = useState(true);
@@ -55,8 +57,18 @@ export const AdminModal = ({ isModalOpen }) => {
   const [getCode, setGetCode] = useState({
     code: "",
   });
+  const [reset, setReset] = useState(false)
   const navigate = useNavigate();
   const styles = useStyles();
+
+
+  useEffect(() => {
+    setChecked(false);
+    setGetCode({ code: '' });
+    setPersonnelName('');
+    setReset(false);
+  }, [reset])
+
 
   const handleInputChange = ({ target }) => {
     setValues({
@@ -90,7 +102,8 @@ export const AdminModal = ({ isModalOpen }) => {
         type: types.newIntent,
         payload: {
           intent: 'success',
-          messages: 'Cuenta configurada exitosamente, redirigiendo en 4 segundos',
+          messages: message
+          // messages: 'Cuenta configurada exitosamente, redirigiendo en 4 segundos',
         },
       });
       setTimeout(() => {
@@ -101,13 +114,14 @@ export const AdminModal = ({ isModalOpen }) => {
 
   const CheckCode = () => {
     return (
-      <Checkbox
-        checked={checked}
-        onChange={(ev, data) => {
+      <Button
+        icon={<Search24Regular />}
+        appearance="transparent"
+        onClick={() => {
           if (!getCode.code) {
-            return alert("Debe colocar el id del empleado");
+            return alert("Debe colocar el id del empleado")
           }
-          setChecked(data.checked);
+          setChecked(true);
           getName();
         }}
       />
@@ -122,19 +136,31 @@ export const AdminModal = ({ isModalOpen }) => {
 
   const getName = async () => {
     const employeeName = await getEmployeeByCode(getCode);
-    console.log(employeeName);
+    if (employeeName.data.status === 401) {
+      dispatch({
+        type: types.newIntent,
+        payload: {
+          intent: 'error',
+          messages: 'Su sesion ha expirado. Cerrando en 5 segundos...'
+        }
+      })
+      setTimeout(() => {
+        logout();
+      }, 5000);
+    } 
     if (employeeName.ok) {
-      setLoadingInput(false);
-      console.log(employeeName.data);
       const { Name } = employeeName.data;
       setPersonnelName(Name);
-      return setUserAdmin(employeeName.data);
-    } else {
+      setUserAdmin(employeeName.data);
       setLoadingInput(false);
+      return;
+    } else {
       setChecked(false);
-      return alert(
+      alert(
         "El codigo de empleado no se encuentra registrado, verifique su codigo nuevamente"
       );
+      // setLoadingInput(false);
+      return;
     }
   };
 
@@ -166,12 +192,23 @@ export const AdminModal = ({ isModalOpen }) => {
       : false;
   };
 
+  const handleReset = (ev) => {
+    ev.preventDefault();
+    setReset(true);
+  }
+
+  const handleClose = (ev) => {
+    ev.preventDefault();
+    setShowModal(false);
+  }
+
   return (
-    <Dialog modalType="non-modal" open={isModalOpen}>
+    <Dialog modalType="modal" open={isModalOpen}>
       <DialogSurface aria-describedby={undefined}>
+      <MessagesInfo />
         <form onSubmit={handleSubmit}>
           <DialogBody>
-            <DialogTitle>Dialog title</DialogTitle>
+            <DialogTitle>Configurar usuario administrativo</DialogTitle>
             <DialogContent className={styles.content}>
               {/* CODIGO DEL ADMINISTRADOR */}
               {checked && !!getCode.code ? (
@@ -187,7 +224,7 @@ export const AdminModal = ({ isModalOpen }) => {
                     Id usuario administrador*
                   </Label>
                   <Input
-                    type="number"
+                    type="text"
                     contentAfter={<CheckCode />}
                     appearance="underline"
                     name="code"
@@ -228,11 +265,16 @@ export const AdminModal = ({ isModalOpen }) => {
               )}
             </DialogContent>
             <DialogActions>
-              <DialogTrigger disableButtonEnhancement>
-                <Button appearance="secondary">Close</Button>
-              </DialogTrigger>
+              {/* {
+                closeModal
+                &&
+                (<DialogTrigger disableButtonEnhancement>
+                  <Button appearance="secondary" onClick={handleClose}>Cerrar</Button>
+                </DialogTrigger>)
+              } */}
+              <Button appearance="secondary" onClick={handleReset}>Atrás</Button>
               <Button type="submit" appearance="primary" disabled={!todoOk()}>
-                Submit
+                Enviar
               </Button>
             </DialogActions>
           </DialogBody>
