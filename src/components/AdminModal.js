@@ -11,7 +11,6 @@ import {
   Input,
   Label,
   makeStyles,
-  Checkbox,
   Spinner,
   shorthands,
   tokens,

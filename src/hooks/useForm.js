@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export const useForm = (initialState = {}) => {
+export const useForm = (initialState) => {
     const [values, setValues] = useState(initialState);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export const useForm = (initialState = {}) => {
         })
     }
 
-    const handleInputChange = ({ target }) => {
+    const handleInputChange = ({target}) => {
         setValues({
             ...values,
             [target.name]: target.value

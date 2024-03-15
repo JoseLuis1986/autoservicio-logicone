@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Card, Input, Label, Button } from "@fluentui/react-components";
+import { Card, Input, Label, Button, useId } from "@fluentui/react-components";
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import { useStyles } from '../useStyles';
@@ -11,10 +11,37 @@ import { renewToken } from '../../helpers/renewToken';
 import { AdminModal } from '../../components/AdminModal';
 import { hasUserAdmin } from '../../helpers/hasUserAdmin';
 
+// const initialState = {
+//     resource: 'https://usnconeboxax1aos.cloud.onebox.dynamics.com',
+//     grant_type: 'client_credentials',
+//     tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
+//     client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
+//     client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
+// };
+
+//  grant_type:client_credentials
+
+// client_id:53b639e6-37d4-42d2-bbae-da10550826e5
+
+// client_secret:GLY8Q~HgDw-Kc6GlC1fheeyqddE3WRA66s9K4aAe
+
+// resource:https://usnconeboxax1aos.cloud.onebox.dynamics.com/
+
+// tennant id: 9db8087d-3999-4ee6-9b27-721d94bd696c
+const initialState = {
+    resource: process.env.REACT_APP_RESOURCE,
+    grant_type: 'client_credentials',
+    tenant_id: '',
+    client_id: '',
+    client_secret: '',
+};
+
+
 export const ConfigInitialPage = () => {
     const [loading, setLoading] = useState(true);
     const [imageSplash, setImageSplash] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [form, setForm] = useState(initialState)
     const { register, setBackground } = useContext(AuthContext);
     const { dispatch } = useContext(AlertContext);
     const navigate = useNavigate();
@@ -24,7 +51,8 @@ export const ConfigInitialPage = () => {
         background: null
     });
     const inputRef = useRef();
-    const inputRef1 =  useRef();
+    const inputRef1 = useRef();
+
 
     useEffect(() => {
         Promise.all([renewToken().catch((error) => error), hasUserAdmin().catch((error) => error)]).then(
@@ -56,27 +84,22 @@ export const ConfigInitialPage = () => {
         );
     }, [dispatch, navigate])
 
-    // const initialState = {
-    //     resource: 'https://usnconeboxax1aos.cloud.onebox.dynamics.com',
-    //     grant_type: 'client_credentials',
-    //     tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
-    //     client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
-    //     client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
-    // };
-
-    const initialState = {
-        resource: process.env.REACT_APP_RESOURCE,
-        grant_type: process.env.REACT_APP_GRANT_TYPE,
-        tenant_id: '',
-        client_id: '',
-        client_secret: '',
-    };
-
-    const [form, handleInputChange, reset] = useForm(initialState);
-
+    // const [form, handleInputChange, reset] = useForm(initialState);
+    
+    const handleInputChange = ({target}) => {
+        setForm({
+            ...form,
+            [target.name]: target.value
+        })
+    }
+    
+    const reset = () => {
+        setForm(initialState);
+    }
+    
     const onSubmit = async (ev) => {
         ev.preventDefault();
-        setLoading(true);
+        setLoading(true)
         const { resource, grant_type, tenant_id, client_id, client_secret } = form;
         const { logo, background } = file;
 
@@ -103,7 +126,6 @@ export const ConfigInitialPage = () => {
             })
         }
     }
-
     // const todoOk = () => {
     //     return (form.resource.length > 0 &&
     //         form.tenant_id.length > 0 &&
@@ -122,9 +144,11 @@ export const ConfigInitialPage = () => {
                         <>
                             <AdminModal isModalOpen={showModal} />
                             <h3 style={{ marginBottom: '2px', textAlign: 'center' }}>Configuración Inicial</h3>
-                            <form noValidate autoComplete="off" onSubmit={onSubmit}>
+                            <form autoComplete="off" onSubmit={onSubmit}>
                                 {/* RECURSO */}
                                 <div className={styles.field}>
+                                    {/* <Label required style={{ fontWeight: 600 }}>URL base (Resource)</Label>
+                                    <input style={{ border: 'none'}} name='resource' type="text" value={form.resource} onChange={handleInputChange} /> */}
                                     <Label required style={{ fontWeight: 600 }}>URL base (Resource)</Label>
                                     <Input appearance="underline" name="resource" value={form.resource} onChange={handleInputChange} />
                                 </div>
@@ -152,20 +176,20 @@ export const ConfigInitialPage = () => {
                                         appearance="underline"
                                         name="logo"
                                         type='file'
-                                        onChange={() => setFiles({...file, logo: inputRef.current.files[0]})}
+                                        onChange={() => setFiles({ ...file, logo: inputRef.current.files[0] })}
                                     // onChange={handleInputImage}
                                     />
                                 </div>
                                 {/* CONFIGURACION DEL BACKGROUND */}
                                 <div className={styles.field}>
                                     <Label style={{ fontWeight: 600 }}>Configuración de fondo</Label>
-                                    <Input 
+                                    <Input
                                         id='bg'
                                         ref={inputRef1}
-                                        appearance="underline" 
-                                        name="background" 
+                                        appearance="underline"
+                                        name="background"
                                         type='file'
-                                        onChange={() => setFiles({...file, background: inputRef1.current.files[0]})} 
+                                        onChange={() => setFiles({ ...file, background: inputRef1.current.files[0] })}
                                     />
                                 </div>
                                 {/* BUTTONS */}
@@ -174,7 +198,7 @@ export const ConfigInitialPage = () => {
                                         Atras
                                     </Button>
                                     {/* disabled={!todoOk()} */}
-                                    <Button type='submit' appearance="primary" shape='square' > 
+                                    <Button type='submit' appearance="primary" shape='square' >
                                         Siguiente
                                     </Button>
                                 </div>
