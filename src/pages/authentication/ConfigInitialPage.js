@@ -56,12 +56,20 @@ export const ConfigInitialPage = () => {
         );
     }, [dispatch, navigate])
 
+    // const initialState = {
+    //     resource: 'https://usnconeboxax1aos.cloud.onebox.dynamics.com',
+    //     grant_type: 'client_credentials',
+    //     tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
+    //     client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
+    //     client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
+    // };
+
     const initialState = {
         resource: process.env.REACT_APP_RESOURCE,
         grant_type: process.env.REACT_APP_GRANT_TYPE,
-        tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
-        client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
-        client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
+        tenant_id: '',
+        client_id: '',
+        client_secret: '',
     };
 
     const [form, handleInputChange, reset] = useForm(initialState);
