@@ -104,13 +104,13 @@ export const ConfigInitialPage = () => {
         }
     }
 
-    const todoOk = () => {
-        return (form.resource.length > 0 &&
-            form.tenant_id.length > 0 &&
-            form.client_id.length > 0 &&
-            form.client_secret.length > 0
-        ) ? true : false;
-    }
+    // const todoOk = () => {
+    //     return (form.resource.length > 0 &&
+    //         form.tenant_id.length > 0 &&
+    //         form.client_id.length > 0 &&
+    //         form.client_secret.length > 0
+    //     ) ? true : false;
+    // }
 
     return (
         <Card className={styles.boundary}>
@@ -173,7 +173,8 @@ export const ConfigInitialPage = () => {
                                     <Button appearance="secondary" shape='square' onClick={reset}>
                                         Atras
                                     </Button>
-                                    <Button type='submit' appearance="primary" shape='square' disabled={!todoOk()} >
+                                    {/* disabled={!todoOk()} */}
+                                    <Button type='submit' appearance="primary" shape='square' > 
                                         Siguiente
                                     </Button>
                                 </div>
