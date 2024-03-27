@@ -19,23 +19,14 @@ import { hasUserAdmin } from '../../helpers/hasUserAdmin';
 //     client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
 // };
 
-//  grant_type:client_credentials
-
-// client_id:53b639e6-37d4-42d2-bbae-da10550826e5
-
-// client_secret:GLY8Q~HgDw-Kc6GlC1fheeyqddE3WRA66s9K4aAe
-
-// resource:https://usnconeboxax1aos.cloud.onebox.dynamics.com/
-
-// tennant id: 9db8087d-3999-4ee6-9b27-721d94bd696c
 const initialState = {
     resource: process.env.REACT_APP_RESOURCE,
     grant_type: 'client_credentials',
-    tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
-    client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
-    client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
-    email: 'jsanchez@logicone.com.do',
-    email_pass: 'Jub66197'
+    tenant_id: '',
+    client_id: '',
+    client_secret: '',
+    email: '',
+    email_pass: ''
 };
 
 
