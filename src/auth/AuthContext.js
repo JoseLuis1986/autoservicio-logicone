@@ -42,14 +42,31 @@ export const AuthProvider = ({ children }) => {
 
             return { ok: true };
         }
-        dispatch({
-            type: types.newIntent,
-            payload: {
-                intent: 'error',
-                messages: resp.error
+        else {
+            console.log(resp)
+            if (resp.error.length > 0) {
+                resp.error.forEach((err) => {
+                    console.log(err.msg)
+                    dispatch({
+                        type: types.newIntent,
+                        payload: {
+                            intent: 'error',
+                            messages: err.msg
+                        }
+                    });
+                });
+                return { ok: false, message: resp.error[0].msg }
+            } else {
+                dispatch({
+                    type: types.newIntent,
+                    payload: {
+                        intent: 'error',
+                        messages: resp.error
+                    }
+                });
+                return { ok: false, message: resp.error }
             }
-        });
-        return { ok: false, message: resp.error }
+        }
     };
 
     const updateRegister = async (data) => {
@@ -61,7 +78,7 @@ export const AuthProvider = ({ children }) => {
                     intent: 'success',
                     messages: resp.msg
                 }
-            });    
+            });
 
             return { ok: true };
         }
@@ -203,11 +220,11 @@ export const AuthProvider = ({ children }) => {
 
         dispatch({ type: types.cleanMessage });
         dispatchConfig({ type: types.hasUserAdmin, payload: false })
-        
+
     }
-    
+
     const setBackground = (bg) => {
-        setAuth({...auth, background: bg})
+        setAuth({ ...auth, background: bg })
     }
 
     return (

@@ -31,9 +31,11 @@ import { hasUserAdmin } from '../../helpers/hasUserAdmin';
 const initialState = {
     resource: process.env.REACT_APP_RESOURCE,
     grant_type: 'client_credentials',
-    tenant_id: '',
-    client_id: '',
-    client_secret: '',
+    tenant_id: '75416002-9e46-4dc3-8b26-5515e8b5e910',
+    client_id: 'aa4b24d0-1cc4-445a-9074-90a85cfdceeb',
+    client_secret: 'Mnt8Q~Y.Essb0DndPE6eCCo597DkeVviiTKsKaw2',
+    email: 'jsanchez@logicone.com.do',
+    email_pass: 'Jub66197'
 };
 
 
@@ -100,7 +102,7 @@ export const ConfigInitialPage = () => {
     const onSubmit = async (ev) => {
         ev.preventDefault();
         setLoading(true)
-        const { resource, grant_type, tenant_id, client_id, client_secret } = form;
+        const { resource, grant_type, tenant_id, client_id, client_secret, email, email_pass } = form;
         const { logo, background } = file;
 
         const formDataToSend = new FormData();
@@ -109,6 +111,8 @@ export const ConfigInitialPage = () => {
         formDataToSend.append('tenant_id', tenant_id);
         formDataToSend.append('client_id', client_id);
         formDataToSend.append('client_secret', client_secret);
+        formDataToSend.append('email', email);
+        formDataToSend.append('email_pass', email_pass);
         formDataToSend.append('logo', logo);
         formDataToSend.append('background', background);
         const result = await register(formDataToSend);
@@ -166,6 +170,16 @@ export const ConfigInitialPage = () => {
                                 <div className={styles.field}>
                                     <Label required style={{ fontWeight: 600 }}>Clave secreta del cliente (Client Secret)</Label>
                                     <Input appearance="underline" name="client_secret" value={form.client_secret} onChange={handleInputChange} />
+                                </div>
+                                {/* CORREO CORPORATIVO */}
+                                <div className={styles.field}>
+                                    <Label required style={{ fontWeight: 600 }}>Correo</Label>
+                                    <Input appearance="underline" name="email" value={form.email} onChange={handleInputChange} />
+                                </div>
+                                {/* CORREO PASS SECRET */}
+                                <div className={styles.field}>
+                                    <Label required style={{ fontWeight: 600 }}>Clave correo</Label>
+                                    <Input type="password" appearance="underline" name="email_pass" value={form.email_pass} onChange={handleInputChange} />
                                 </div>
                                 {/* LOGO DE LA EMPRESA */}
                                 <div className={styles.field}>

@@ -16,7 +16,7 @@ export const AuthRouter = () => {
     return (
         <div style={{
             width: '100%', // Puedes ajustar el ancho según tus necesidades
-            height: '100vh', // Puedes ajustar la altura según tus necesidades
+            height: '105vh', // Puedes ajustar la altura según tus necesidades
             backgroundImage: `url(data:image/png;base64,${imagenBase64 ? imagenBase64 : auth.background})`,
             backgroundSize: 'cover', // Esto ajustará la imagen para cubrir todo el contenedor
             backgroundRepeat: 'no-repeat',
